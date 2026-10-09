@@ -2,39 +2,448 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>2026级侦查学1班课程表（按课程变化节点）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B2A4A">
+<title>侦查学1班课程表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;margin:24px;color:#222}
-h1{font-size:22px;margin-bottom:8px}
-h2{font-size:18px;margin:28px 0 10px;padding:10px 12px;background:#eef4f8;border-left:5px solid #527a9e}
-.note{color:#666;font-size:12px;line-height:1.8;margin-bottom:14px}
-.change{font-size:12px;color:#555;margin:0 0 10px}
-table{border-collapse:collapse;width:100%;table-layout:fixed;margin-bottom:28px}
-th,td{border:1px solid #ccc;padding:7px;font-size:12px;vertical-align:top}
-th{background:#f0f4f8;text-align:center}
-td.slot{background:#fafafa;font-weight:bold;text-align:center;width:64px;vertical-align:middle}
-td.empty{background:#fcfcfc}
-.item{margin-bottom:6px;padding-bottom:5px;border-bottom:1px dashed #ddd}
-.item:last-child{border-bottom:none;margin-bottom:0}
-.name{font-weight:bold;font-size:13px}
-.meta{color:#555;font-size:11px;line-height:1.6}
-.badge{display:inline-block;margin:2px 0;padding:1px 4px;border:1px solid #ccc;border-radius:3px;color:#666;font-size:10px}
-.footer{font-size:11px;color:#777}
+:root{
+  --ink:#1B2A4A;--paper:#EEF1F6;--surface:#FFFFFF;--line:#D6DCE6;--muted:#5D6880;
+  --gold:#B8891A;--gold-text:#7F5E0E;--gold-wash:#FBF4E2;
+  --tint-l:95%;--tint-s:62%;--edge-l:46%;--edge-s:52%;
+  --num:"Barlow Condensed","PingFang SC","Microsoft YaHei",sans-serif;
+  --text:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --ink:#E4E9F3;--paper:#0E1524;--surface:#172137;--line:#2A3754;--muted:#9AA6BF;
+    --gold:#E0B341;--gold-text:#E8C25E;--gold-wash:#2A2512;
+    --tint-l:20%;--tint-s:28%;--edge-l:62%;--edge-s:48%;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--text)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px calc(32px + env(safe-area-inset-bottom))}
+
+/* ---- top: class name + week switcher ---- */
+.top{background:var(--ink);color:var(--surface);padding:calc(14px + env(safe-area-inset-top)) 0 18px}
+@media (prefers-color-scheme:dark){.top{background:#16213A;color:var(--ink)}}
+.top .wrap{padding-bottom:0}
+.class-name{margin:0 0 6px;font-size:13px;opacity:.75;letter-spacing:.04em}
+.weekbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.wk{display:flex;flex-direction:column;align-items:flex-start;gap:4px;flex:1;min-width:0}
+@media (min-width:560px){.wk{flex-direction:row;align-items:baseline;gap:12px}}
+.wk h1{margin:0;font:600 40px/1 var(--num);letter-spacing:.01em;white-space:nowrap}
+.wk h1 b{font-weight:700;font-size:52px;padding:0 2px}
+.wk-dates{font:500 18px/1.2 var(--num);opacity:.8;white-space:nowrap}
+.nav{display:flex;gap:6px}
+.nav button,.today-btn{border:1px solid rgba(255,255,255,.28);background:transparent;border-radius:10px;cursor:pointer;color:inherit}
+@media (prefers-color-scheme:dark){.nav button,.today-btn{border-color:var(--line)}}
+.nav button{width:40px;height:40px;font-size:20px;line-height:1}
+.nav button:disabled{opacity:.3;cursor:default}
+.today-btn{height:40px;padding:0 14px;font-size:14px}
+.today-btn[hidden]{display:none}
+
+/* ---- now line ---- */
+.now{margin:16px 0 0;padding:12px 14px;background:var(--surface);border-radius:12px;border-left:4px solid var(--gold);display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+.now[hidden],.changes[hidden]{display:none}
+.now .date{font:600 17px/1.3 var(--num);color:var(--gold-text);white-space:nowrap}
+.now .what{font-size:15px}
+.now .what strong{font-weight:600}
+.now .where{color:var(--muted);font-size:14px}
+
+/* ---- changes ---- */
+.changes{margin:12px 0 0;font-size:14px}
+.changes summary{cursor:pointer;color:var(--muted);padding:4px 0;list-style-position:inside}
+.changes ul{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:4px}
+.changes li{display:flex;gap:8px;align-items:baseline}
+.changes .sign{font:700 15px/1 var(--num);width:14px;text-align:center}
+.changes .add .sign{color:#2E7D4F}.changes .del .sign{color:#B4443A}
+@media (prefers-color-scheme:dark){.changes .add .sign{color:#6BCB8F}.changes .del .sign{color:#EE8A80}}
+.changes .del .txt{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+
+/* ---- course chip (shared) ---- */
+.course{--h:220;background:hsl(var(--h) var(--tint-s) var(--tint-l));border-left:3px solid hsl(var(--h) var(--edge-s) var(--edge-l));border-radius:8px;padding:8px 10px;position:relative}
+.course .name{font-weight:600;font-size:14px;line-height:1.35}
+.course .meta{color:var(--muted);font-size:12px;line-height:1.5;margin-top:2px}
+.course .weeks{font:500 13px/1 var(--num);color:var(--muted)}
+.tag{display:inline-block;font-size:11px;line-height:1;padding:3px 6px;border-radius:999px;margin-left:6px;vertical-align:2px;white-space:nowrap}
+.tag.live{background:var(--gold);color:#fff}
+@media (prefers-color-scheme:dark){.tag.live{color:#1B1405}}
+.tag.next{border:1px solid var(--gold);color:var(--gold-text)}
+.tag.span{border:1px solid var(--line);color:var(--muted);margin:4px 0 0}
+.course.is-live{box-shadow:0 0 0 2px var(--gold)}
+.course.is-done{opacity:.55}
+
+/* ---- phone: day tabs + day list ---- */
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:16px 0 10px;position:sticky;top:0;z-index:2;background:var(--paper);padding:6px 0}
+.day-tab{border:0;background:transparent;border-radius:10px;padding:6px 0 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;position:relative}
+.day-tab .dw{font-size:12px;color:var(--muted)}
+.day-tab .dn{font:600 20px/1.1 var(--num)}
+.day-tab .dot{width:5px;height:5px;border-radius:50%;background:var(--muted);opacity:.5}
+.day-tab .dot.none{visibility:hidden}
+.day-tab.is-today .dn{color:var(--gold-text)}
+.day-tab.is-today::after{content:"";position:absolute;left:30%;right:30%;bottom:0;height:2px;background:var(--gold);border-radius:2px}
+.day-tab[aria-selected="true"]{background:var(--ink);color:var(--surface)}
+.day-tab[aria-selected="true"] .dw{color:inherit;opacity:.75}
+.day-tab[aria-selected="true"] .dn{color:inherit}
+.day-tab[aria-selected="true"] .dot{background:currentColor;opacity:.8}
+@media (prefers-color-scheme:dark){.day-tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}}
+.daylist{display:grid;gap:8px}
+.slotrow{display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:stretch}
+.slotrow .time{text-align:right;padding-top:7px}
+.slotrow .time .t1{font:600 17px/1.1 var(--num)}
+.slotrow .time .t2{font:500 13px/1.2 var(--num);color:var(--muted)}
+.slotrow .time .sl{font-size:11px;color:var(--muted)}
+.slotrow .free{border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:13px;display:flex;align-items:center;padding:0 12px;min-height:44px}
+.slotrow .course{padding:10px 12px}
+.slotrow .course .name{font-size:16px}
+.slotrow .course .meta{font-size:13px}
+.empty-day{background:var(--surface);border-radius:12px;padding:28px 16px;text-align:center;color:var(--muted)}
+.empty-day b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+
+/* ---- tablet/desktop: week grid ---- */
+.grid{display:none}
+@media (min-width:760px){
+  .days,.daylist{display:none}
+  .grid{display:grid;margin-top:16px;background:var(--surface);border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .wk h1{font-size:44px}.wk h1 b{font-size:60px}
+}
+.grid .h,.grid .s,.grid .c{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.grid .h{padding:10px 8px 8px;text-align:center;position:relative}
+.grid .h .dw{font-size:13px;color:var(--muted)}
+.grid .h .dn{font:600 20px/1.1 var(--num)}
+.grid .h.is-today{background:var(--gold-wash)}
+.grid .h.is-today::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--gold)}
+.grid .h.is-today .dn{color:var(--gold-text)}
+.grid .corner{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.grid .s{padding:10px 8px;text-align:center}
+.grid .s .sl{font-size:12px;color:var(--muted)}
+.grid .s .t1{font:600 17px/1.1 var(--num)}
+.grid .s .t2{font:500 13px/1.2 var(--num);color:var(--muted)}
+.grid .c{padding:6px;min-height:104px;display:flex;flex-direction:column}
+.grid .c.is-today{background:var(--gold-wash)}
+.grid .c .course{flex:1}
+.grid .lastcol{border-right:0}
+.grid .lastrow{border-bottom:0}
+
+/* ---- legend + footer ---- */
+.legend{margin:18px 0 0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.legend span b{font:600 14px/1 var(--num);color:var(--ink);margin-right:4px}
+.notice{margin:16px 0 0;padding:12px 14px;border-radius:12px;background:var(--gold-wash);color:var(--gold-text);font-size:14px}
+.notice[hidden]{display:none}
+footer{margin-top:20px;font-size:12px;color:var(--muted)}
+
+@media (prefers-reduced-motion:no-preference){
+  .course.is-live{animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 35%,transparent)}}
+}
 @media print{
-  body{margin:10mm}
-  h2{break-before:page}
-  h2:first-of-type{break-before:auto}
-  table{break-inside:avoid}
+  body{background:#fff}
+  .top{background:#fff;color:#000;border-bottom:2px solid #000}
+  .nav,.today-btn,.now,.days,.daylist,.changes{display:none!important}
+  .grid{display:grid!important}
+  .course.is-live{animation:none}
 }
 </style>
 </head>
 <body>
-<h1>2026级侦查学1班课程表（按课程变化节点）</h1>
-<div class="note">
-节次时间：1-2节 08:00-09:40｜3-4节 10:00-11:40｜5-6节 14:00-15:40｜7-8节 16:00-17:40｜9-10节 19:00-20:40｜11-12节 21:00-22:40。
-<br>
-<strong>划分规则：</strong>逐周比较星期、节次、课程、教师、教室及特殊说明；只有课程安排完全相同的连续周才合并为一个课程表。
-<br>
-<strong>因此本学期划分为：</strong>第7周（10月5日～10月11日）｜第8–9周（10月12日～10月25日）｜第10周（10月26日～11月1日）｜第11–12周（11月2日～11月15日）｜第13周（11月16日～11月22日）｜第14周（11月23日～11月29日）｜第15–18周（11月30日～12月27日）。
-</div>
-<h2>第7周课程表（2026-10-05 ～ 2026-10-11）</h2><div class="change">本表显示该周段内实际发生的全部课程；课程名称后的周次仍保留原始周次。</div><table><tr><th>节次</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr><tr><td class="slot">1-2节</td><td></td><td></td><td><div class="item"><div class="name">宪法学Ⅰ</div><div class="meta">李惠雯｜7-12周｜瀚海楼A503</div></div></td><td></td><td></td><td></td><td></td></tr><tr><td class="slot">3-4节</td><td></td><td></td><td></td><td><div class="item"><div class="name">大学生心理健康教育Ⅰ</div><div class="meta">戚光远｜7-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">大学语文Ⅰ</div><div class="meta">蒲帅｜7-18周｜瀚海楼A501</div></div></td><td></td><td></td></tr><tr><td class="slot">5-6节</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="slot">7-8节</td><td></td><td></td><td></td><td><div class="item"><div class="name">大学体育Ⅰ</div><div class="meta">田帅｜7周｜体育场</div></div></td><td></td><td></td><td></td></tr></table><h2>第8–9周课程表（2026-10-12 ～ 2026-10-25）</h2><div class="change">本表显示该周段内实际发生的全部课程；课程名称后的周次仍保留原始周次。</div><table><tr><th>节次</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr><tr><td class="slot">1-2节</td><td><div class="item"><div class="name">大学体育Ⅰ</div><div class="meta">田帅｜8-18周｜体育场</div></div></td><td></td><td><div class="item"><div class="name">宪法学Ⅰ</div><div class="meta">李惠雯｜7-12周｜瀚海楼A503</div></div></td><td></td><td></td><td></td><td></td></tr><tr><td class="slot">3-4节</td><td></td><td><div class="item"><div class="name">公安工作概论</div><div class="meta">王旭｜8-18周｜瀚海楼B111</div></div></td><td></td><td><div class="item"><div class="name">大学生心理健康教育Ⅰ</div><div class="meta">戚光远｜7-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">大学语文Ⅰ</div><div class="meta">蒲帅｜7-18周｜瀚海楼A501</div></div></td><td></td><td></td></tr><tr><td class="slot">5-6节</td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜8-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜8-18周｜瀚海楼A501</div></div></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="slot">7-8节</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table><h2>第10周课程表（2026-10-26 ～ 2026-11-01）</h2><div class="change">本表显示该周段内实际发生的全部课程；课程名称后的周次仍保留原始周次。</div><table><tr><th>节次</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr><tr><td class="slot">1-2节</td><td><div class="item"><div class="name">大学体育Ⅰ</div><div class="meta">田帅｜8-18周｜体育场</div></div></td><td></td><td><div class="item"><div class="name">宪法学Ⅰ</div><div class="meta">李惠雯｜7-12周｜瀚海楼A503</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜10-18周｜瀚海楼A501</div></div></td><td></td><td></td><td></td></tr><tr><td class="slot">3-4节</td><td></td><td><div class="item"><div class="name">公安工作概论</div><div class="meta">王旭｜8-18周｜瀚海楼B111</div></div></td><td></td><td><div class="item"><div class="name">大学生心理健康教育Ⅰ</div><div class="meta">戚光远｜7-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">大学语文Ⅰ</div><div class="meta">蒲帅｜7-18周｜瀚海楼A501</div></div></td><td></td><td></td></tr><tr><td class="slot">5-6节</td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜8-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜8-18周｜瀚海楼A501</div></div></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="slot">7-8节</td><td></td><td></td><td></td><td></td><td><div class="item"><div class="name">公安工作概论</div><div class="meta">王旭｜10周｜瀚海楼A501</div></div></td><td></td><td></td></tr></table><h2>第11–12周课程表（2026-11-02 ～ 2026-11-15）</h2><div class="change">本表显示该周段内实际发生的全部课程；课程名称后的周次仍保留原始周次。</div><table><tr><th>节次</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr><tr><td class="slot">1-2节</td><td><div class="item"><div class="name">大学体育Ⅰ</div><div class="meta">田帅｜8-18周｜体育场</div></div></td><td></td><td><div class="item"><div class="name">宪法学Ⅰ</div><div class="meta">李惠雯｜7-12周｜瀚海楼A503</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜10-18周｜瀚海楼A501</div></div></td><td></td><td></td><td></td></tr><tr><td class="slot">3-4节</td><td></td><td><div class="item"><div class="name">公安工作概论</div><div class="meta">王旭｜8-18周｜瀚海楼B111</div></div></td><td></td><td><div class="item"><div class="name">大学生心理健康教育Ⅰ</div><div class="meta">戚光远｜7-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">大学语文Ⅰ</div><div class="meta">蒲帅｜7-18周｜瀚海楼A501</div></div></td><td></td><td></td></tr><tr><td class="slot">5-6节</td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜8-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜8-18周｜瀚海楼A501</div></div></td><td></td><td><div class="item"><div class="name">大学生健康教育Ⅰ</div><div class="badge">跨至7-8节</div><div class="meta">张湘玉｜11-12周｜红十字应急救护培训基地</div></div></td><td><div class="item"><div class="name">大学生国家安全教育Ⅰ</div><div class="meta">张明悦｜11-18周｜瀚海楼A308</div></div></td><td></td><td></td></tr><tr><td class="slot">7-8节</td><td></td><td></td><td><div class="item"><div class="name">“四史”学习教育专题Ⅰ</div><div class="meta">陈菲,沙柢,时劲雨,原野｜11-18周｜瀚海楼A212</div></div></td><td></td><td></td><td></td><td></td></tr></table><h2>第13周课程表（2026-11-16 ～ 2026-11-22）</h2><div class="change">本表显示该周段内实际发生的全部课程；课程名称后的周次仍保留原始周次。</div><table><tr><th>节次</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr><tr><td class="slot">1-2节</td><td><div class="item"><div class="name">大学体育Ⅰ</div><div class="meta">田帅｜8-18周｜体育场</div></div></td><td></td><td><div class="item"><div class="name">人民警察法Ⅰ</div><div class="meta">高扬｜13-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜10-18周｜瀚海楼A501</div></div></td><td></td><td></td><td></td></tr><tr><td class="slot">3-4节</td><td></td><td><div class="item"><div class="name">公安工作概论</div><div class="meta">王旭｜8-18周｜瀚海楼B111</div></div></td><td></td><td><div class="item"><div class="name">大学生心理健康教育Ⅰ</div><div class="meta">戚光远｜7-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">大学语文Ⅰ</div><div class="meta">蒲帅｜7-18周｜瀚海楼A501</div></div></td><td></td><td></td></tr><tr><td class="slot">5-6节</td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜8-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜8-18周｜瀚海楼A501</div></div></td><td></td><td></td><td><div class="item"><div class="name">大学生国家安全教育Ⅰ</div><div class="meta">张明悦｜11-18周｜瀚海楼A308</div></div></td><td></td><td></td></tr><tr><td class="slot">7-8节</td><td></td><td></td><td><div class="item"><div class="name">“四史”学习教育专题Ⅰ</div><div class="meta">陈菲,沙柢,时劲雨,原野｜11-18周｜瀚海楼A212</div></div></td><td></td><td></td><td></td><td></td></tr></table><h2>第14周课程表（2026-11-23 ～ 2026-11-29）</h2><div class="change">本表显示该周段内实际发生的全部课程；课程名称后的周次仍保留原始周次。</div><table><tr><th>节次</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr><tr><td class="slot">1-2节</td><td><div class="item"><div class="name">大学体育Ⅰ</div><div class="meta">田帅｜8-18周｜体育场</div></div></td><td><div class="item"><div class="name">大学生健康教育Ⅰ</div><div class="meta">张湘玉｜14周｜瀚海楼B308</div></div></td><td><div class="item"><div class="name">人民警察法Ⅰ</div><div class="meta">高扬｜13-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜10-18周｜瀚海楼A501</div></div></td><td></td><td></td><td></td></tr><tr><td class="slot">3-4节</td><td></td><td><div class="item"><div class="name">公安工作概论</div><div class="meta">王旭｜8-18周｜瀚海楼B111</div></div></td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜14-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">大学生心理健康教育Ⅰ</div><div class="meta">戚光远｜7-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">大学语文Ⅰ</div><div class="meta">蒲帅｜7-18周｜瀚海楼A501</div></div></td><td></td><td></td></tr><tr><td class="slot">5-6节</td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜8-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜8-18周｜瀚海楼A501</div></div></td><td></td><td></td><td><div class="item"><div class="name">大学生国家安全教育Ⅰ</div><div class="meta">张明悦｜11-18周｜瀚海楼A308</div></div></td><td></td><td></td></tr><tr><td class="slot">7-8节</td><td></td><td></td><td><div class="item"><div class="name">“四史”学习教育专题Ⅰ</div><div class="meta">陈菲,沙柢,时劲雨,原野｜11-18周｜瀚海楼A212</div></div></td><td></td><td></td><td></td><td></td></tr></table><h2>第15–18周课程表（2026-11-30 ～ 2026-12-27）</h2><div class="change">本表显示该周段内实际发生的全部课程；课程名称后的周次仍保留原始周次。</div><table><tr><th>节次</th><th>星期一</th><th>星期二</th><th>星期三</th><th>星期四</th><th>星期五</th><th>星期六</th><th>星期日</th></tr><tr><td class="slot">1-2节</td><td><div class="item"><div class="name">大学体育Ⅰ</div><div class="meta">田帅｜8-18周｜体育场</div></div></td><td></td><td><div class="item"><div class="name">人民警察法Ⅰ</div><div class="meta">高扬｜13-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜10-18周｜瀚海楼A501</div></div></td><td></td><td></td><td></td></tr><tr><td class="slot">3-4节</td><td></td><td><div class="item"><div class="name">公安工作概论</div><div class="meta">王旭｜8-18周｜瀚海楼B111</div></div></td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜14-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">大学生心理健康教育Ⅰ</div><div class="meta">戚光远｜7-18周｜瀚海楼A501</div></div></td><td><div class="item"><div class="name">大学语文Ⅰ</div><div class="meta">蒲帅｜7-18周｜瀚海楼A501</div></div></td><td></td><td></td></tr><tr><td class="slot">5-6节</td><td><div class="item"><div class="name">大学英语1</div><div class="meta">郭海建｜8-18周｜耕海楼B305</div></div></td><td><div class="item"><div class="name">思想道德与法治Ⅰ</div><div class="meta">时劲雨｜8-18周｜瀚海楼A501</div></div></td><td></td><td></td><td><div class="item"><div class="name">大学生国家安全教育Ⅰ</div><div class="meta">张明悦｜11-18周｜瀚海楼A308</div></div></td><td></td><td></td></tr><tr><td class="slot">7-8节</td><td></td><td></td><td><div class="item"><div class="name">“四史”学习教育专题Ⅰ</div><div class="meta">陈菲,沙柢,时劲雨,原野｜11-18周｜瀚海楼A212</div></div></td><td></td><td></td><td></td><td></td></tr></table><div class="footer">本版本依据原始课程表按实际课程变化节点重新组织，不改变原始课程名称、教师、教室、节次及周次。</div></body></html>
+<header class="top">
+  <div class="wrap">
+    <p class="class-name">2026级侦查学1班 课程表</p>
+    <div class="weekbar">
+      <div class="wk">
+        <h1 id="wkTitle">第<b>7</b>周</h1>
+        <span class="wk-dates" id="wkDates"></span>
+      </div>
+      <button class="today-btn" id="todayBtn" hidden>回到本周</button>
+      <div class="nav">
+        <button id="prevBtn" aria-label="上一周">‹</button>
+        <button id="nextBtn" aria-label="下一周">›</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="notice" id="notice" hidden></p>
+  <section class="now" id="now" aria-live="polite"></section>
+  <details class="changes" id="changes"></details>
+
+  <div class="days" role="tablist" aria-label="星期" id="days"></div>
+  <div class="daylist" id="daylist" role="tabpanel"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="legend" id="legend"></div>
+  <footer>课程名称、教师、教室、节次及周次均与原始课程表一致。</footer>
+</main>
+
+<script>
+// 第1周周一。第1–6周无课，第7周（10月5日）开始上课
+const SEMESTER_START = new Date(2026, 7, 24);
+const FIRST_WEEK = 7, LAST_WEEK = 18;
+const SLOTS = [
+  { id: 1, label: "1-2节", start: "08:00", end: "09:40" },
+  { id: 2, label: "3-4节", start: "10:00", end: "11:40" },
+  { id: 3, label: "5-6节", start: "14:00", end: "15:40" },
+  { id: 4, label: "7-8节", start: "16:00", end: "17:40" },
+];
+const EVENING = [
+  { label: "9-10节", start: "19:00", end: "20:40" },
+  { label: "11-12节", start: "21:00", end: "22:40" },
+];
+const DAYS = ["一", "二", "三", "四", "五", "六", "日"];
+
+// day: 1=星期一 … 7=星期日；slot: SLOTS 的 id；span: 连上的节数
+const COURSES = [
+  { name: "宪法学Ⅰ", teacher: "李惠雯", from: 7, to: 12, day: 3, slot: 1, room: "瀚海楼A503" },
+  { name: "大学生心理健康教育Ⅰ", teacher: "戚光远", from: 7, to: 18, day: 4, slot: 2, room: "瀚海楼A501" },
+  { name: "大学语文Ⅰ", teacher: "蒲帅", from: 7, to: 18, day: 5, slot: 2, room: "瀚海楼A501" },
+  { name: "大学体育Ⅰ", teacher: "田帅", from: 7, to: 7, day: 4, slot: 4, room: "体育场" },
+  { name: "大学体育Ⅰ", teacher: "田帅", from: 8, to: 18, day: 1, slot: 1, room: "体育场" },
+  { name: "公安工作概论", teacher: "王旭", from: 8, to: 18, day: 2, slot: 2, room: "瀚海楼B111" },
+  { name: "大学英语1", teacher: "郭海建", from: 8, to: 18, day: 1, slot: 3, room: "耕海楼B305" },
+  { name: "思想道德与法治Ⅰ", teacher: "时劲雨", from: 8, to: 18, day: 2, slot: 3, room: "瀚海楼A501" },
+  { name: "思想道德与法治Ⅰ", teacher: "时劲雨", from: 10, to: 18, day: 4, slot: 1, room: "瀚海楼A501" },
+  { name: "公安工作概论", teacher: "王旭", from: 10, to: 10, day: 5, slot: 4, room: "瀚海楼A501" },
+  { name: "大学生健康教育Ⅰ", teacher: "张湘玉", from: 11, to: 12, day: 4, slot: 3, span: 2, room: "红十字应急救护培训基地" },
+  { name: "大学生国家安全教育Ⅰ", teacher: "张明悦", from: 11, to: 18, day: 5, slot: 3, room: "瀚海楼A308" },
+  { name: "“四史”学习教育专题Ⅰ", teacher: "陈菲,沙柢,时劲雨,原野", from: 11, to: 18, day: 3, slot: 4, room: "瀚海楼A212" },
+  { name: "人民警察法Ⅰ", teacher: "高扬", from: 13, to: 18, day: 3, slot: 1, room: "瀚海楼A501" },
+  { name: "大学生健康教育Ⅰ", teacher: "张湘玉", from: 14, to: 14, day: 2, slot: 1, room: "瀚海楼B308" },
+  { name: "大学英语1", teacher: "郭海建", from: 14, to: 18, day: 3, slot: 2, room: "耕海楼B305" },
+];
+// 每门课一个色相，同一门课在整周里颜色一致
+const HUES = {
+  "宪法学Ⅰ": 4, "大学生心理健康教育Ⅰ": 168, "大学语文Ⅰ": 28, "大学体育Ⅰ": 122,
+  "公安工作概论": 222, "大学英语1": 268, "思想道德与法治Ⅰ": 345, "大学生健康教育Ⅰ": 188,
+  "大学生国家安全教育Ⅰ": 205, "“四史”学习教育专题Ⅰ": 48, "人民警察法Ⅰ": 240,
+};
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const dayStart = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const mondayOf = w => addDays(SEMESTER_START, (w - 1) * 7);
+const weekOf = d => Math.floor(Math.round((dayStart(d) - SEMESTER_START) / 864e5) / 7) + 1;
+const dowOf = d => (d.getDay() + 6) % 7 + 1;
+const md = d => `${d.getMonth() + 1}月${d.getDate()}日`;
+const minutes = hhmm => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
+const weeksLabel = c => c.from === c.to ? `${c.from}周` : `${c.from}-${c.to}周`;
+const endSlot = c => SLOTS[c.slot - 1 + (c.span || 1) - 1];
+const timeOf = c => `${SLOTS[c.slot - 1].start}–${endSlot(c).end}`;
+const slotLabel = c => c.span > 1 ? `${SLOTS[c.slot - 1].label.split("-")[0]}-${endSlot(c).label.split("-")[1]}` : SLOTS[c.slot - 1].label;
+const classesOf = w => COURSES.filter(c => w >= c.from && w <= c.to);
+const at = (w, day, slot) => classesOf(w).find(c => c.day === day && c.slot === slot);
+const covered = (w, day, slot) => classesOf(w).some(c => c.day === day && c.slot < slot && c.slot + (c.span || 1) > slot);
+
+// ?now=2026-10-09T10:30 可模拟某个时间查看效果
+const FIXED_NOW = new URLSearchParams(location.search).get("now");
+const clock = () => FIXED_NOW ? new Date(FIXED_NOW) : new Date();
+const state = { week: FIRST_WEEK, day: 1, now: clock() };
+
+function todayInfo() {
+  const now = state.now, w = weekOf(now);
+  return { now, week: w, day: dowOf(now), inTerm: w >= FIRST_WEEK && w <= LAST_WEEK, mins: now.getHours() * 60 + now.getMinutes() };
+}
+
+// 今天每节课的状态：done / live / next
+function todayStatus() {
+  const t = todayInfo();
+  const list = t.inTerm ? classesOf(t.week).filter(c => c.day === t.day).sort((a, b) => a.slot - b.slot) : [];
+  const status = new Map();
+  let next = null, live = null;
+  for (const c of list) {
+    const s = minutes(SLOTS[c.slot - 1].start), e = minutes(endSlot(c).end);
+    if (t.mins >= e) status.set(c, "done");
+    else if (t.mins >= s) { status.set(c, "live"); live = c; }
+    else if (!next) { status.set(c, "next"); next = c; }
+  }
+  return { t, list, status, live, next };
+}
+
+function courseHTML(c, st, opts = {}) {
+  const tag = st === "live" ? '<span class="tag live">正在上课</span>'
+    : st === "next" ? '<span class="tag next">下一节</span>' : "";
+  const span = c.span > 1 ? `<div><span class="tag span">连上至${endSlot(c).label}</span></div>` : "";
+  const cls = st === "live" ? " is-live" : st === "done" ? " is-done" : "";
+  const time = opts.showTime && c.span > 1 ? `<div class="meta">${timeOf(c)}</div>` : "";
+  return `<div class="course${cls}" style="--h:${HUES[c.name] ?? 220}">
+    <div class="name">${esc(c.name)}${tag}</div>${span}
+    <div class="meta">${esc(c.room)}</div>
+    <div class="meta">${esc(c.teacher)} <span class="weeks">${weeksLabel(c)}</span></div>${time}
+  </div>`;
+}
+
+function renderHeader() {
+  const w = state.week, mon = mondayOf(w), sun = addDays(mon, 6), t = todayInfo();
+  $("wkTitle").innerHTML = `第<b>${w}</b>周`;
+  $("wkDates").textContent = `${md(mon)} – ${md(sun)}`;
+  $("prevBtn").disabled = w <= FIRST_WEEK;
+  $("nextBtn").disabled = w >= LAST_WEEK;
+  const home = Math.min(LAST_WEEK, Math.max(FIRST_WEEK, t.week));
+  $("todayBtn").hidden = w === home;
+  document.title = `第${w}周 · 侦查学1班课程表`;
+}
+
+function renderNow() {
+  const { t, list, live, next } = todayStatus();
+  const el = $("now");
+  const date = `<span class="date">${md(t.now)} 星期${DAYS[t.day - 1]}</span>`;
+  let what;
+  if (!t.inTerm) {
+    el.hidden = true; return;
+  } else if (live) {
+    what = `<span class="what">正在上：<strong>${esc(live.name)}</strong></span><span class="where">${timeOf(live)}｜${esc(live.room)}</span>`;
+  } else if (next) {
+    what = `<span class="what">下一节：<strong>${esc(next.name)}</strong></span><span class="where">${timeOf(next)}｜${esc(next.room)}</span>`;
+  } else if (list.length) {
+    what = `<span class="what">今天的课已经上完了</span>`;
+  } else {
+    what = `<span class="what">今天没有课</span>`;
+  }
+  el.hidden = false;
+  el.innerHTML = date + what;
+}
+
+function renderNotice() {
+  const t = todayInfo(), n = $("notice");
+  if (t.week < FIRST_WEEK) { n.hidden = false; n.textContent = `还没开始上课。第${FIRST_WEEK}周（${md(mondayOf(FIRST_WEEK))}）起开课，下面是第一周的课表。`; }
+  else if (t.week > LAST_WEEK) { n.hidden = false; n.textContent = `本学期的课已于${md(addDays(mondayOf(LAST_WEEK), 6))}结束，下面是最后一周的课表。`; }
+  else n.hidden = true;
+}
+
+function renderChanges() {
+  const w = state.week, el = $("changes");
+  const key = c => `${c.day}|${c.slot}|${c.name}|${c.teacher}|${c.room}|${c.span || 1}`;
+  if (w === FIRST_WEEK) { el.hidden = true; return; }
+  const prev = new Map(classesOf(w - 1).map(c => [key(c), c])), cur = new Map(classesOf(w).map(c => [key(c), c]));
+  const add = [...cur].filter(([k]) => !prev.has(k)).map(([, c]) => c);
+  const del = [...prev].filter(([k]) => !cur.has(k)).map(([, c]) => c);
+  const order = (a, b) => a.day - b.day || a.slot - b.slot;
+  const line = (c, kind) => `<li class="${kind}"><span class="sign">${kind === "add" ? "+" : "−"}</span><span class="txt">周${DAYS[c.day - 1]} ${slotLabel(c)}　${esc(c.name)}（${esc(c.room)}${c.from === c.to ? "，仅本周" : ""}）</span></li>`;
+  el.hidden = false;
+  if (!add.length && !del.length) { el.innerHTML = `<summary>和第${w - 1}周相同</summary>`; el.open = false; return; }
+  const n = add.length + del.length;
+  const wasOpen = el.dataset.week === String(w) ? el.open : false;
+  el.innerHTML = `<summary>和第${w - 1}周相比有 ${n} 处变化</summary><ul>${add.sort(order).map(c => line(c, "add")).join("")}${del.sort(order).map(c => line(c, "del")).join("")}</ul>`;
+  el.open = wasOpen;
+  el.dataset.week = w;
+}
+
+function renderDays() {
+  const w = state.week, mon = mondayOf(w), t = todayInfo(), cls = classesOf(w);
+  $("days").innerHTML = DAYS.map((d, i) => {
+    const day = i + 1, date = addDays(mon, i), has = cls.some(c => c.day === day);
+    const isToday = t.week === w && t.day === day;
+    return `<button class="day-tab${isToday ? " is-today" : ""}" role="tab" aria-selected="${state.day === day}" data-day="${day}" aria-label="星期${d} ${md(date)}${has ? "" : "，无课"}">
+      <span class="dw">${isToday ? "今天" : d}</span><span class="dn">${date.getDate()}</span><span class="dot${has ? "" : " none"}"></span></button>`;
+  }).join("");
+  $("days").querySelectorAll(".day-tab").forEach(b => b.onclick = () => { state.day = +b.dataset.day; renderDays(); renderDayList(); });
+}
+
+function renderDayList() {
+  const w = state.week, day = state.day, { t, status } = todayStatus();
+  const isToday = t.week === w && t.day === day;
+  const list = classesOf(w).filter(c => c.day === day);
+  if (!list.length) {
+    $("daylist").innerHTML = `<div class="empty-day"><b>星期${DAYS[day - 1]}没有课</b>${md(addDays(mondayOf(w), day - 1))}</div>`;
+    return;
+  }
+  const rows = [];
+  for (const s of SLOTS) {
+    if (covered(w, day, s.id)) continue;
+    const c = at(w, day, s.id);
+    const end = c ? endSlot(c) : s;
+    rows.push(`<div class="slotrow"><div class="time"><div class="t1">${s.start}</div><div class="t2">${end.end}</div><div class="sl">${c ? slotLabel(c) : s.label}</div></div>
+      ${c ? courseHTML(c, isToday ? status.get(c) : null) : '<div class="free">空闲</div>'}</div>`);
+  }
+  $("daylist").innerHTML = rows.join("");
+}
+
+function renderGrid() {
+  const w = state.week, mon = mondayOf(w), t = todayInfo(), { status } = todayStatus(), cls = classesOf(w);
+  const isTodayCol = day => t.week === w && t.day === day;
+  const cols = DAYS.map((_, i) => {
+    const day = i + 1;
+    return day >= 6 && !cls.some(c => c.day === day) && !isTodayCol(day) ? "minmax(56px,.45fr)" : "minmax(0,1fr)";
+  });
+  const g = $("grid");
+  g.style.gridTemplateColumns = `76px ${cols.join(" ")}`;
+  g.style.gridTemplateRows = `auto repeat(${SLOTS.length}, auto)`;
+  const cells = ['<div class="corner" style="grid-row:1;grid-column:1"></div>'];
+  DAYS.forEach((d, i) => {
+    const day = i + 1, date = addDays(mon, i);
+    cells.push(`<div class="h${isTodayCol(day) ? " is-today" : ""}${day === 7 ? " lastcol" : ""}" style="grid-row:1;grid-column:${day + 1}">
+      <div class="dw">${isTodayCol(day) ? "今天" : "周" + d}</div><div class="dn">${date.getMonth() + 1}/${date.getDate()}</div></div>`);
+  });
+  SLOTS.forEach((s, r) => {
+    const row = r + 2, last = r === SLOTS.length - 1 ? " lastrow" : "";
+    cells.push(`<div class="s${last}" style="grid-row:${row};grid-column:1"><div class="sl">${s.label}</div><div class="t1">${s.start}</div><div class="t2">${s.end}</div></div>`);
+    for (let day = 1; day <= 7; day++) {
+      if (covered(w, day, s.id)) continue;
+      const c = at(w, day, s.id), span = c?.span || 1;
+      const lastR = r + span - 1 === SLOTS.length - 1 ? " lastrow" : "";
+      cells.push(`<div class="c${isTodayCol(day) ? " is-today" : ""}${day === 7 ? " lastcol" : ""}${lastR}" style="grid-row:${row}/span ${span};grid-column:${day + 1}">
+        ${c ? courseHTML(c, isTodayCol(day) ? status.get(c) : null, { showTime: true }) : ""}</div>`);
+    }
+  });
+  g.innerHTML = cells.join("");
+}
+
+function renderLegend() {
+  $("legend").innerHTML = [...SLOTS, ...EVENING].map(s => `<span><b>${s.start}–${s.end}</b>${s.label}</span>`).join("");
+}
+
+function render() {
+  renderHeader(); renderNotice(); renderNow(); renderChanges(); renderDays(); renderDayList(); renderGrid();
+}
+
+function goWeek(w, day) {
+  state.week = Math.min(LAST_WEEK, Math.max(FIRST_WEEK, w));
+  const t = todayInfo();
+  state.day = day ?? (t.week === state.week ? t.day : firstClassDay(state.week));
+  history.replaceState(null, "", state.week === homeWeek() ? location.pathname + location.search : `#w${state.week}`);
+  render();
+}
+const homeWeek = () => Math.min(LAST_WEEK, Math.max(FIRST_WEEK, todayInfo().week));
+const firstClassDay = w => Math.min(...classesOf(w).map(c => c.day));
+
+function init() {
+  renderLegend();
+  const t = todayInfo();
+  const m = location.hash.match(/^#w(\d+)$/);
+  if (m) return goWeek(+m[1]);
+  if (t.inTerm) return goWeek(t.week, t.day);
+  goWeek(homeWeek());
+}
+
+$("prevBtn").onclick = () => goWeek(state.week - 1);
+$("nextBtn").onclick = () => goWeek(state.week + 1);
+$("todayBtn").onclick = () => { const t = todayInfo(); goWeek(homeWeek(), t.inTerm ? t.day : undefined); };
+document.addEventListener("keydown", e => {
+  if (e.target.closest("input,textarea")) return;
+  if (e.key === "ArrowLeft" && !e.target.closest(".days")) goWeek(state.week - 1);
+  if (e.key === "ArrowRight" && !e.target.closest(".days")) goWeek(state.week + 1);
+});
+// 每分钟刷新“正在上课/下一节”；跨天时回到新的今天
+setInterval(() => {
+  const before = weekOf(state.now) * 10 + dowOf(state.now);
+  state.now = clock();
+  const after = weekOf(state.now) * 10 + dowOf(state.now);
+  if (before !== after && state.week === Math.floor(before / 10)) goWeek(homeWeek());
+  else render();
+}, 60000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { state.now = clock(); render(); } });
+
+init();
+</script>
+</body>
+</html>
