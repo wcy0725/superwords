@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>虎头小子 · 灯会擂台</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,">
+<style>
+  html, body { margin: 0; height: 100%; background: #120a10; overflow: hidden; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { display: block; background: #000; box-shadow: 0 0 60px rgba(0, 0, 0, .6); }
+</style>
+</head>
+<body>
+<canvas id="game" width="1280" height="720"></canvas>
+<script src="js/core.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/gfx.js"></script>
+<script src="js/bg.js"></script>
+<script src="js/player.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/boss_lion.js"></script>
+<script src="js/boss_kite.js"></script>
+<script src="js/boss_nian.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/fight.js"></script>
+<script>TH.Save.load(); TH.boot(TH.Scenes.title());</script>
+</body>
+</html>
