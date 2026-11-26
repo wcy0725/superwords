@@ -331,6 +331,11 @@ body { min-height: 100vh; overflow-x: clip; }
   .dock small, .dock .lbl-long { display: none; }
   .dock i { margin: 0 1px; }
 }
+@media (max-width: 380px) {
+  .dock { font-size: 11.5px; overflow-x: auto; scrollbar-width: none; }
+  .dock::-webkit-scrollbar { display: none; }
+  .dock button { padding: 10px 6px; flex: none; }
+}
 
 .after { width: min(100% - 40px, 820px); margin: 0 auto; padding: 72px 0 132px; font: 400 15px/1.7 var(--f-text); color: var(--fg2); }
 .after h2 { margin: 0 0 14px; font-size: 26px; line-height: 1.2; font-weight: 800; color: var(--fg); }
@@ -481,10 +486,10 @@ html.vt-theme::view-transition-new(root) { animation: vt-open .8s cubic-bezier(.
   <button type="button" data-set-lang="en" lang="en">English</button>
   <button type="button" data-set-lang="zh" lang="zh-Hans">中文</button>
   <i></i>
-  <button type="button" id="btn-theme"><span class="sw"></span><span id="lbl-theme"></span></button>
+  <button type="button" id="btn-theme"><span class="sw"></span><span class="lbl-long" id="lbl-theme"></span></button>
   <i></i>
   <button type="button" id="btn-print"><span data-i="dPrint"></span></button>
-  <button type="button" id="btn-png"><span id="lbl-png" data-i="dPng"></span><small>3508×4961</small></button>
+  <button type="button" id="btn-png"><span id="lbl-png" data-i="dPng"></span><small>PNG 3508×4961</small></button>
 </nav>
 <div class="toast" id="toast" data-screen role="status"></div>
 
@@ -658,7 +663,7 @@ const T = {
     '数据：联合国艾滋病规划署（UNAIDS）Fact sheet 2026（2025 年估计值）。预防、检测与治疗：WHO、CDC。本海报为一般科普信息，不能替代诊疗建议；如有疑虑，请咨询医疗机构或当地疾控中心。'],
 
   dPrint: ['A3で印刷', 'Print A3', '打印 A3'],
-  dPng: ['PNGで保存', 'Save PNG', '保存 PNG'],
+  dPng: ['画像で保存', 'Save image', '保存为图片'],
   dBusy: ['書き出し中…', 'Rendering…', '正在生成…'],
   thNight: ['夜', 'Night', '夜'], thPaper: ['紙', 'Paper', '纸'],
   tDone: ['PNGを保存しました（3508 × 4961 px、300 dpi）', 'PNG saved (3508 × 4961 px, 300 dpi)', 'PNG 已保存（3508 × 4961 像素，300 dpi）'],
@@ -670,9 +675,9 @@ const T = {
     'This page is the poster. Print A3 keeps the type as vectors and renders the dot art at 300 dpi. In the print dialog, choose A3 paper, set margins to none and turn background graphics on.',
     '这个页面本身就是一张 A3 海报。“打印 A3”会保留矢量文字，并以 300 dpi 输出点阵图。请在打印对话框中选择 A3 纸张、边距设为“无”，并勾选“背景图形”。'],
   aP2: [
-    '「PNGで保存」は、印刷所にそのまま渡せる3508 × 4961ピクセルの画像を書き出します。インクを節約したいときは、先に白い「紙」テーマへ切り替えてください。',
-    'Save PNG exports a 3508 × 4961 pixel image you can hand straight to a print shop. To save ink, switch to the white Paper theme first.',
-    '“保存 PNG”会导出 3508 × 4961 像素的图片，可直接交给印刷店。想节省墨水，请先切换到白色的“纸”主题。'],
+    '画像ファイルが必要なときは「画像で保存」を使ってください。ブラウザーの印刷ダイアログが出力できるのは、プリンターとPDFだけです。「画像で保存」は3508 × 4961ピクセル（A3・300 dpi）のPNGを書き出し、そのまま印刷所に渡せます。インクを節約したいときは、先に白い「紙」テーマへ切り替えてください。',
+    'Need an image file? The browser print dialog can only send to a printer or a PDF, so use Save image instead. It exports a 3508 × 4961 pixel PNG (A3 at 300 dpi) that you can hand straight to a print shop. To save ink, switch to the white Paper theme first.',
+    '需要图片文件？浏览器的打印对话框只能输出到打印机或 PDF，请改用“保存为图片”。它会导出 3508 × 4961 像素（A3，300 dpi）的 PNG，可直接交给印刷店。想节省墨水，请先切换到白色的“纸”主题。'],
   aL1: ['A3、縦。1枚に収まります', 'A3 portrait, on a single sheet', 'A3 竖版，正好一页'],
   aL2: ['300 dpi。PNGにも解像度を記録', '300 dpi, written into the PNG itself', '300 dpi，分辨率写入 PNG 文件'],
   aL3: ['個の点。1点が1,000人', 'dots, each one 1,000 people', '个点，每个点代表 1000 人'],
@@ -1302,6 +1307,10 @@ function fitText(measure) {
     if (w > 0) box.style.setProperty(prop, clamp(20 * target / w, lo, hi).toFixed(3));
   }
 }
+function labelTheme() {
+  const name = S.theme === 'night' ? t('thNight') : t('thPaper');
+  $('#lbl-theme').textContent = name; $('#btn-theme').setAttribute('aria-label', name);
+}
 function applyLang() {
   const i = li();
   root.lang = poster.lang = HTML_LANG[i]; root.dataset.lang = poster.dataset.lang = S.lang;
@@ -1309,14 +1318,14 @@ function applyLang() {
   $$('[data-i]').forEach(el => { el.innerHTML = T[el.dataset.i][i]; });
   $$('[data-set-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setLang === S.lang)));
   $('#btn-all').textContent = S.all ? t('btnBack') : t('btnAll');
-  $('#lbl-theme').textContent = S.theme === 'night' ? t('thNight') : t('thPaper');
+  labelTheme();
   renderCallouts(); renderLive(); renderCountdown(); renderLegend(); renderChips(); renderWeeks(); renderChart(); renderQR();
   fitText();
 }
 function applyTheme() {
   root.dataset.theme = poster.dataset.theme = S.theme;
   $('meta[name="theme-color"]').content = S.theme === 'night' ? '#17040a' : '#ffffff';
-  $('#lbl-theme').textContent = S.theme === 'night' ? t('thNight') : t('thPaper');
+  labelTheme();
   printKey = '';
 }
 const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
