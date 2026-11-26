@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="ja" data-theme="night" data-lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>世界エイズデー 2026</title>
+<meta name="description" content="World AIDS Day, 1 December 2026. A ribbon drawn from 41,000 dots: each dot is 1,000 people living with HIV. 日本語 / English / 中文. Prints as an A3 poster at 300 dpi.">
+<meta name="theme-color" content="#17040a">
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317040a'/%3E%3Cpath d='M20 58 40 22a9 9 0 1 0-16 0l20 36' fill='none' stroke='%23ff3d44' stroke-width='8' stroke-linejoin='round'/%3E%3C/svg%3E">
+
+<!-- ============================================================
+     Shared styles: tokens, type, components. No layout here.
+     Everything inside .poster is sized in --u (1/297 of the sheet
+     width), so the screen is a true-to-scale preview of the print.
+     ============================================================ -->
+<style id="css-base">
+:root[data-theme="night"], .poster[data-theme="night"] {
+  --page: #17040a; --bg: #17040a;
+  --fg: #fff3ea; --fg2: rgba(255, 243, 234, .74); --fg3: rgba(255, 243, 234, .52);
+  --red: #ff4048; --on: #ff4048; --off: #b4bcdc; --mem: #ffd0bd;
+  --rule: rgba(255, 243, 234, .2); --rule2: rgba(255, 243, 234, .46); --wash: rgba(255, 243, 234, .07);
+  --glow: 0 0 .7em rgba(255, 64, 72, .9);
+}
+:root[data-theme="paper"], .poster[data-theme="paper"] {
+  --page: #ffffff; --bg: #ffffff;
+  --fg: #000000; --fg2: #3a3a3a; --fg3: #6a6a6a;
+  --red: #c7001f; --on: #c7001f; --off: #3d3d3d; --mem: #8f8f8f;
+  --rule: rgba(0, 0, 0, .22); --rule2: rgba(0, 0, 0, .55); --wash: rgba(0, 0, 0, .05);
+  --glow: none;
+}
+:root, .poster {
+  --f-num: Bahnschrift, "DIN Alternate", "Avenir Next Condensed", "Roboto Condensed", "Arial Narrow", sans-serif;
+}
+:root[data-lang="ja"], .poster[data-lang="ja"] {
+  --f-text: Bahnschrift, "Avenir Next", "Noto Sans JP", "Noto Sans CJK JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "BIZ UDPGothic", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
+}
+:root[data-lang="zh"], .poster[data-lang="zh"] {
+  --f-text: Bahnschrift, "Avenir Next", "Noto Sans SC", "Noto Sans CJK SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+}
+:root[data-lang="en"], .poster[data-lang="en"] {
+  --f-text: Bahnschrift, "Avenir Next", "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+}
+
+:root[data-theme="night"] { color-scheme: dark; }
+:root[data-theme="paper"] { color-scheme: light; }
+*, *::before, *::after { box-sizing: border-box; }
+::selection { background: var(--red); color: #fff; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { margin: 0; background: var(--page); color: var(--fg); font-family: var(--f-text); }
+
+.poster {
+  position: relative; overflow: hidden;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--f-text); font-weight: 400; font-kerning: normal;
+  font-size: calc(var(--u) * 3.7); line-height: 1.62;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+.poster[data-lang="en"] { line-height: 1.42; }
+.poster :where(h1, h2, h3, h4, p, ul, ol, figure) { margin: 0; padding: 0; font: inherit; }
+.poster ul { list-style: none; }
+.poster b, .poster strong { font-weight: 800; }
+.poster[data-lang="en"] b, .poster[data-lang="en"] strong { font-weight: 700; }
+.poster a { color: inherit; text-decoration: none; }
+
+.num { font-family: var(--f-num); font-stretch: 75%; font-weight: 700; }
+.small { font-size: calc(var(--u) * 3); line-height: 1.55; color: var(--fg2); }
+.poster[data-lang="en"] .small { line-height: 1.38; }
+
+/* operators are drawn, not typed: identical in every font and language */
+.op { display: inline-block; width: .72em; height: .72em; vertical-align: -.06em; fill: none; stroke: currentColor; stroke-width: 7.5; stroke-linecap: butt; }
+
+/* swatches that mirror the marks in the dot art */
+.mark { display: inline-block; flex: none; width: .66em; height: .66em; border-radius: 50%; vertical-align: -.02em; }
+.mark--on { background: var(--on); box-shadow: var(--glow); }
+.mark--off { border: .13em solid var(--off); }
+.mark--unk { border: .13em solid var(--off); opacity: .5; }
+.mark--mem { width: .34em; height: .34em; background: var(--mem); opacity: .8; margin: 0 .16em; }
+
+/* ---------- hero ---------- */
+.art canvas { display: block; width: 100%; height: 100%; position: relative; }
+.art .glow { position: absolute; inset: 0; pointer-events: none; }
+.poster[data-theme="paper"] .glow { display: none; }
+.art__print { display: none !important; }
+.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.leaders line { stroke: var(--rule2); stroke-width: .28; }
+.leaders circle { fill: var(--fg); }
+
+.title__date { line-height: .76; letter-spacing: -.012em; white-space: nowrap; font-size: calc(var(--u) * var(--fit-date, 60)); }
+.title__name { line-height: 1.12; font-weight: 900; white-space: nowrap; font-size: calc(var(--u) * var(--fit-name, 13)); margin-top: calc(var(--u) * 1.6); }
+.poster[data-lang="en"] .title__name { font-family: var(--f-num); font-stretch: 75%; font-weight: 700; letter-spacing: .005em; }
+.title__name > span, .title__date > span { display: inline-block; }
+.title__when { margin-top: calc(var(--u) * 3.2); font-size: calc(var(--u) * 4.1); line-height: 1.3; color: var(--fg2); display: flex; align-items: center; gap: calc(var(--u) * 2.2); flex-wrap: wrap; }
+.pill { font-size: calc(var(--u) * 3); font-weight: 800; color: var(--bg); background: var(--fg); border-radius: 99em; padding: .12em .8em .16em; white-space: nowrap; }
+.title__theme { margin-top: calc(var(--u) * 6.4); }
+.title__theme .lbl { display: block; font-size: calc(var(--u) * 2.9); color: var(--fg3); line-height: 1.4; }
+.title__theme strong { display: block; font-size: calc(var(--u) * 5.4); line-height: 1.32; font-weight: 800; }
+
+.story h2 { font-size: calc(var(--u) * 9.3); line-height: 1.2; font-weight: 900; letter-spacing: -.01em; }
+.poster[data-lang="en"] .story h2 { font-weight: 700; font-size: calc(var(--u) * 9.6); line-height: 1.08; letter-spacing: -.012em; }
+.story p { margin-top: calc(var(--u) * 2.6); }
+.story h2 + p { margin-top: calc(var(--u) * 3.6); }
+.story .live { color: var(--fg); transition: opacity 1.2s; }
+.story .live b { font-family: var(--f-num); font-weight: 700; font-size: 1.25em; font-variant-numeric: tabular-nums; }
+
+.call__pct { display: flex; align-items: baseline; gap: calc(var(--u) * 1.6); font-family: var(--f-num); font-stretch: 75%; font-weight: 700; font-size: calc(var(--u) * 22); line-height: .86; }
+.call__pct .mark { font-size: calc(var(--u) * 7); align-self: center; }
+.call__pct small { font-size: .5em; margin-left: -.14em; }
+.call__txt { margin-top: calc(var(--u) * 2.2); font-size: calc(var(--u) * 4.1); line-height: 1.34; font-weight: 800; }
+.poster[data-lang="en"] .call__txt { font-weight: 700; }
+.call__txt b { display: block; font-family: var(--f-text); font-weight: 900; font-size: 1.5em; line-height: 1.2; white-space: nowrap; }
+.poster[data-lang="en"] .call__txt b { font-weight: 700; }
+.call .small { margin-top: calc(var(--u) * 1.8); }
+
+.btn {
+  appearance: none; font: inherit; font-size: calc(var(--u) * 3.2); font-weight: 800; line-height: 1.2; color: var(--fg);
+  background: transparent; border: calc(var(--u) * .3) solid var(--rule2); border-radius: 99em;
+  padding: calc(var(--u) * 1.5) calc(var(--u) * 3.4) calc(var(--u) * 1.7); margin-top: calc(var(--u) * 3.2); cursor: pointer; text-align: left;
+}
+.btn:hover { background: var(--wash); border-color: var(--fg); }
+.btn[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.poster :focus-visible { outline: calc(var(--u) * .5) solid var(--red); outline-offset: calc(var(--u) * .6); }
+
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * .6) calc(var(--u) * 4.2); font-size: calc(var(--u) * 3); line-height: 1.4; color: var(--fg2); }
+.legend li { display: flex; align-items: center; gap: calc(var(--u) * 1.3); white-space: nowrap; }
+.legend li:first-child { color: var(--fg); font-weight: 800; }
+
+.lens { position: absolute; left: 0; top: 0; border-radius: 50%; border: 1px solid var(--rule2); pointer-events: none; opacity: 0; transition: opacity .25s; will-change: transform; }
+.tip { position: absolute; left: 0; top: 0; pointer-events: none; opacity: 0; transition: opacity .2s; white-space: nowrap; z-index: 3;
+  display: flex; align-items: center; gap: .55em; font-size: calc(var(--u) * 3.1); line-height: 1.2; font-weight: 800;
+  color: var(--fg); background: var(--bg); border: 1px solid var(--rule2); border-radius: 99em; padding: .5em 1em .56em; }
+.tip b { font-family: var(--f-num); font-weight: 700; font-size: 1.15em; }
+.tip span + span { color: var(--fg2); font-weight: 500; }
+
+/* ---------- know ---------- */
+.eq { display: flex; align-items: center; gap: .16em; font-family: var(--f-num); font-stretch: 75%; font-weight: 700; font-size: calc(var(--u) * 14.5); line-height: 1; letter-spacing: .005em; }
+.eq .op { color: var(--red); }
+.eqh { display: flex; align-items: center; gap: calc(var(--u) * 2.4); font-size: calc(var(--u) * 5.6); line-height: 1.24; font-weight: 900; min-height: calc(var(--u) * 14.5); }
+.poster[data-lang="en"] .eqh { font-weight: 700; font-size: calc(var(--u) * 6); line-height: 1.1; }
+.eqh .op { font-size: calc(var(--u) * 14.5); color: var(--red); flex: none; }
+.eqh .big { font-family: var(--f-num); font-stretch: 75%; font-weight: 700; font-size: 2.1em; line-height: .8; vertical-align: -.08em; margin: 0 .04em; }
+.k > p, .k > ul { margin-top: calc(var(--u) * 3); }
+.routes li { display: grid; grid-template-columns: auto 1fr; column-gap: calc(var(--u) * 2.2); align-items: baseline; padding: calc(var(--u) * 1.15) 0; border-top: calc(var(--u) * .2) solid var(--rule); }
+.routes li:last-child { border-bottom: calc(var(--u) * .2) solid var(--rule); }
+.routes b { font-size: calc(var(--u) * 4.4); white-space: nowrap; }
+.routes span { color: var(--fg2); font-size: calc(var(--u) * 3.3); line-height: 1.4; }
+.chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 1.5); }
+.chips button {
+  appearance: none; font: inherit; font-size: calc(var(--u) * 3.5); font-weight: 800; line-height: 1.2; color: var(--fg); cursor: pointer;
+  background: transparent; border: calc(var(--u) * .25) solid var(--rule2); border-radius: 99em; padding: calc(var(--u) * .95) calc(var(--u) * 2.7) calc(var(--u) * 1.15);
+}
+.poster[data-lang="en"] .chips button { font-weight: 700; }
+.chips button:hover { background: var(--wash); }
+.chips button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.why { margin-top: calc(var(--u) * 2.6) !important; min-height: 3.1em; }
+
+/* ---------- act: a timeline, because this part really is a sequence ---------- */
+.act__h { font-size: calc(var(--u) * 4.4); line-height: 1.2; font-weight: 900; }
+.poster[data-lang="en"] .act__h { font-weight: 700; }
+.s { position: relative; border-top: calc(var(--u) * .3) solid var(--fg); padding-top: calc(var(--u) * 2.6); }
+.s::before { content: ""; position: absolute; left: 0; top: calc(var(--u) * -1.15); width: calc(var(--u) * 2); height: calc(var(--u) * 2); border-radius: 50%; background: var(--fg); }
+.s h4 { font-size: calc(var(--u) * 5); line-height: 1.1; font-weight: 900; display: flex; align-items: baseline; gap: .12em; min-height: calc(var(--u) * 11.5); }
+.poster[data-lang="en"] .s h4 { font-weight: 700; font-size: calc(var(--u) * 5.4); gap: .22em; }
+.s h4 b { font-family: var(--f-num); font-stretch: 75%; font-weight: 700; font-size: calc(var(--u) * 13.5); line-height: .8; }
+.s p, .s li { font-size: calc(var(--u) * 3.55); }
+.s li + li { margin-top: calc(var(--u) * 1.4); }
+.s .cap { font-size: calc(var(--u) * 2.6); line-height: 1.3; color: var(--fg3); margin: calc(var(--u) * 1) 0 calc(var(--u) * 2); }
+.dots { display: block; width: 100%; height: auto; overflow: visible; }
+.dots text { font-family: var(--f-text); font-size: 2.3px; fill: var(--fg3); font-weight: 400; }
+.dots .d72 { fill: var(--on); }
+.dots .w-off { fill: none; stroke: var(--fg3); stroke-width: .34; }
+.dots .w-on { fill: var(--fg); }
+.dots .w-end { fill: none; stroke: var(--fg); stroke-width: .34; }
+.dots .w-lbl { fill: var(--fg); font-weight: 800; }
+.dots .w-bracket { fill: none; stroke: var(--fg3); stroke-width: .22; }
+.uu .eq { font-size: calc(var(--u) * 16); }
+.uu__cap { margin-top: calc(var(--u) * 2.2); font-size: calc(var(--u) * 3.7); line-height: 1.32; font-weight: 800; }
+.poster[data-lang="en"] .uu__cap { font-weight: 700; }
+.s4 h4 { min-height: 0; margin-bottom: calc(var(--u) * 2.2); }
+.chart { position: relative; }
+.s4 > p { margin-top: calc(var(--u) * 2.6); }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--f-text); font-size: 2.35px; fill: var(--fg3); font-weight: 400; }
+.chart .grid { stroke: var(--rule); stroke-width: .14; }
+.chart .zone { fill: var(--wash); }
+.chart .thr { stroke: var(--fg); stroke-width: .2; stroke-dasharray: .9 .7; }
+.chart .thr-t { fill: var(--fg); font-weight: 800; }
+.chart .line { fill: none; stroke: var(--on); stroke-width: .5; stroke-linejoin: round; stroke-linecap: round; }
+.chart .pt { fill: var(--on); stroke: var(--bg); stroke-width: .32; }
+.chart .cross { stroke: var(--fg); stroke-width: .16; opacity: 0; }
+.chart .hot { fill: var(--fg); stroke: var(--bg); stroke-width: .45; opacity: 0; }
+.chart.is-hover .cross, .chart.is-hover .hot { opacity: 1; }
+.chart .ctip { position: absolute; left: 0; top: 0; pointer-events: none; opacity: 0; white-space: nowrap; font-size: calc(var(--u) * 2.7); line-height: 1.2; font-weight: 800; color: var(--bg); background: var(--fg); border-radius: 99em; padding: .36em .9em .44em; transform: translate(-50%, -135%); }
+.chart.is-hover .ctip { opacity: 1; }
+
+/* ---------- close ---------- */
+.close__say { font-size: calc(var(--u) * 4.5); line-height: 1.5; font-weight: 800; }
+.poster[data-lang="en"] .close__say { font-weight: 600; font-size: calc(var(--u) * 4.5); line-height: 1.3; }
+.res { display: flex; align-items: center; gap: calc(var(--u) * 3); }
+.res__qr { flex: none; width: calc(var(--u) * 17.5); height: calc(var(--u) * 17.5); background: #fff; padding: calc(var(--u) * 1.4); border-radius: calc(var(--u) * .8); }
+.res__qr svg { display: block; width: 100%; height: 100%; }
+.res__t { font-size: calc(var(--u) * 3.1); line-height: 1.4; color: var(--fg2); }
+.res__t b { display: block; font-size: calc(var(--u) * 3.9); line-height: 1.3; color: var(--fg); }
+.res__t span { display: block; }
+.res__t .url { font-family: var(--f-num); font-weight: 700; font-size: calc(var(--u) * 4); color: var(--fg); letter-spacing: .01em; }
+.src { font-size: calc(var(--u) * 2.3); line-height: 1.45; color: var(--fg3); font-weight: 500; }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+[hidden] { display: none !important; }
+</style>
+
+<!-- ============================================================
+     The poster layout: A3, 297 x 420 units. Used for print and for
+     wide screens. Narrow screens get the reflowed layout below.
+     ============================================================ -->
+<style id="css-layout" media="print, screen and (min-width: 1100px)">
+.stage { container-type: inline-size; width: min(100%, max(141vh, 1100px)); margin: 0 auto; }
+.poster { --u: calc(100cqw / 297); width: calc(var(--u) * 297); height: calc(var(--u) * 420); }
+.hero { position: absolute; left: 0; top: 0; width: 100%; height: calc(var(--u) * 236); }
+.art { position: absolute; inset: 0; }
+.lead { position: absolute; left: calc(var(--u) * 15); top: calc(var(--u) * 13); width: calc(var(--u) * 96); }
+.title { --fit-w: 96; }
+.story { margin-top: calc(var(--u) * 9); width: calc(var(--u) * 91); }
+.call { position: absolute; left: calc(var(--u) * 224); width: calc(var(--u) * 58); }
+.call--on { top: calc(var(--u) * 42); }
+.call--off { top: calc(var(--u) * 136); }
+.legend { position: absolute; left: calc(var(--u) * 118); top: calc(var(--u) * 216); width: calc(var(--u) * 164); }
+
+.know { position: absolute; left: calc(var(--u) * 15); top: calc(var(--u) * 240); width: calc(var(--u) * 267);
+  display: grid; grid-template-columns: 74fr 88fr 93fr; column-gap: calc(var(--u) * 6); }
+.act { position: absolute; left: calc(var(--u) * 15); top: calc(var(--u) * 307); width: calc(var(--u) * 267);
+  display: grid; grid-template-columns: 50fr 57fr 59fr 92fr; column-gap: calc(var(--u) * 3); row-gap: calc(var(--u) * 3.4); }
+.act__h { grid-column: 1 / -1; }
+.uu { display: grid; grid-template-columns: auto 1fr; column-gap: calc(var(--u) * 5); align-items: start; }
+.close { position: absolute; left: calc(var(--u) * 15); top: calc(var(--u) * 386); width: calc(var(--u) * 267);
+  display: grid; grid-template-columns: 1fr calc(var(--u) * 92); column-gap: calc(var(--u) * 10); align-items: center;
+  border-top: calc(var(--u) * .2) solid var(--rule); padding-top: calc(var(--u) * 2.6); }
+.src { grid-column: 1 / -1; margin-top: calc(var(--u) * 2); }
+</style>
+
+<!-- ============================================================
+     Narrow screens: one column, same components, larger unit.
+     ============================================================ -->
+<style id="css-compact" media="screen and (max-width: 1099.98px)">
+.stage { container-type: inline-size; width: min(100%, 640px); margin: 0 auto; }
+.poster { --u: calc(100cqw / 100); padding: calc(var(--u) * 7) calc(var(--u) * 6) calc(var(--u) * 10); font-size: calc(var(--u) * 3.9); }
+.hero { display: flex; flex-direction: column; }
+.lead { display: contents; }
+.title { --fit-w: 88; order: 1; }
+.art { position: relative; order: 2; height: calc(var(--u) * 124); margin: calc(var(--u) * 2) calc(var(--u) * -6) 0; }
+.leaders { display: none; }
+.story { order: 3; margin-top: calc(var(--u) * 2); }
+.story h2 { font-size: calc(var(--u) * 9.6); }
+.call { order: 4; margin-top: calc(var(--u) * 9); padding-top: calc(var(--u) * 5); border-top: calc(var(--u) * .25) solid var(--rule); }
+.call__pct { font-size: calc(var(--u) * 26); }
+.call__txt { font-size: calc(var(--u) * 4.8); }
+.legend { order: 5; margin-top: calc(var(--u) * 8); font-size: calc(var(--u) * 3.3); gap: calc(var(--u) * 1.4) calc(var(--u) * 4.2); }
+.small { font-size: calc(var(--u) * 3.3); }
+.know, .act { margin-top: calc(var(--u) * 14); display: grid; row-gap: calc(var(--u) * 11); }
+.act { row-gap: calc(var(--u) * 9); }
+.act__h { font-size: calc(var(--u) * 5.6); margin-bottom: calc(var(--u) * -3); }
+.s p, .s li { font-size: calc(var(--u) * 3.9); }
+.s .cap { font-size: calc(var(--u) * 3); }
+.routes span { font-size: calc(var(--u) * 3.6); }
+.chips button { font-size: calc(var(--u) * 3.9); padding: calc(var(--u) * 1.5) calc(var(--u) * 3.2) calc(var(--u) * 1.7); }
+.uu .eq { font-size: calc(var(--u) * 19); }
+.uu__cap { font-size: calc(var(--u) * 4.4); }
+.chart { margin-top: calc(var(--u) * 5) !important; }
+.chart text { font-size: 2.6px; }
+.close { margin-top: calc(var(--u) * 14); padding-top: calc(var(--u) * 6); border-top: calc(var(--u) * .25) solid var(--rule); display: grid; row-gap: calc(var(--u) * 6); }
+.close__say { font-size: calc(var(--u) * 5); }
+.res__qr { width: calc(var(--u) * 26); height: calc(var(--u) * 26); }
+.res__t { font-size: calc(var(--u) * 3.5); }
+.res__t b { font-size: calc(var(--u) * 4.3); }
+.src { font-size: calc(var(--u) * 2.9); }
+.tip { font-size: calc(var(--u) * 3.4); }
+.chart .ctip { font-size: calc(var(--u) * 3.2); }
+</style>
+
+<!-- ============================================================
+     Print: exactly one A3 sheet. The live WebGL canvas is swapped
+     for a 2D canvas rendered at 3508 px across (300 dpi).
+     ============================================================ -->
+<style id="css-print" media="print">
+@page { size: 297mm 420mm; margin: 0; }
+html, body { width: 297mm; height: 420mm; margin: 0 !important; padding: 0 !important; overflow: hidden; background: var(--bg) !important; }
+html, body, .poster { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.stage { width: 297mm !important; margin: 0 !important; container-type: normal !important; }
+.poster { --u: 1mm; width: 297mm; height: 420mm; break-inside: avoid; break-after: avoid; }
+[data-screen] { display: none !important; }
+.art__live { display: none !important; }
+/* "pixelated" keeps Chrome on its bitmap path: the canvas goes into the PDF as one 3508 px image, alpha intact */
+.art__print { display: block !important; image-rendering: pixelated; }
+.glow { display: none !important; }
+.poster *, .poster *::before, .poster *::after { animation: none !important; transition: none !important; }
+.chips button[aria-pressed="true"], .btn[aria-pressed="true"] { background: transparent; color: var(--fg); border-color: var(--rule2); }
+.mark--on { box-shadow: none; }
+</style>
+
+<!-- ============================================================
+     Screen-only chrome: the dock, the afterword, transitions.
+     ============================================================ -->
+<style id="css-screen" media="screen">
+html { scroll-behavior: smooth; }
+body { min-height: 100vh; overflow-x: clip; }
+.art__live { touch-action: pan-y; }
+.hero { cursor: crosshair; }
+.lead, .call, .legend { cursor: auto; }
+
+.dock {
+  position: fixed; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 30;
+  display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px; max-width: calc(100vw - 16px);
+  background: color-mix(in srgb, var(--page) 72%, transparent); border: 1px solid var(--rule);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5);
+  font: 600 13px/1 var(--f-text); color: var(--fg); view-transition-name: dock;
+}
+.dock button {
+  appearance: none; font: inherit; color: inherit; background: transparent; border: 0; border-radius: 999px;
+  padding: 10px 13px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 7px;
+}
+.dock button:hover { background: var(--wash); }
+.dock button[aria-pressed="true"] { background: var(--fg); color: var(--page); }
+.dock button:focus-visible { outline: 2px solid var(--red); outline-offset: 1px; }
+.dock button[disabled] { opacity: .55; cursor: progress; }
+.dock i { width: 1px; height: 18px; background: var(--rule); margin: 0 3px; flex: none; }
+.dock .sw { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+.dock small { font-size: 11px; font-weight: 500; opacity: .62; font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) {
+  .dock { gap: 1px; padding: 4px; font-size: 12px; }
+  .dock button { padding: 10px 9px; }
+  .dock small, .dock .lbl-long { display: none; }
+  .dock i { margin: 0 1px; }
+}
+
+.after { width: min(100% - 40px, 820px); margin: 0 auto; padding: 72px 0 132px; font: 400 15px/1.7 var(--f-text); color: var(--fg2); }
+.after h2 { margin: 0 0 14px; font-size: 26px; line-height: 1.2; font-weight: 800; color: var(--fg); }
+.after p { margin: 0 0 12px; max-width: 62ch; }
+.after ul { margin: 22px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0 28px; border-top: 1px solid var(--rule); }
+.after li { padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: 13.5px; line-height: 1.5; }
+.after li b { display: block; font: 700 22px/1.1 var(--f-num); font-stretch: 75%; color: var(--fg); margin-bottom: 3px; }
+.after a { color: var(--fg); text-underline-offset: 3px; }
+
+.toast { position: fixed; left: 50%; bottom: 76px; transform: translateX(-50%); z-index: 31; font: 600 13px/1.3 var(--f-text); color: var(--page); background: var(--fg); border-radius: 999px; padding: 10px 16px; opacity: 0; pointer-events: none; transition: opacity .25s; max-width: calc(100vw - 32px); text-align: center; }
+.toast.is-on { opacity: 1; }
+
+/* the 72 hours tick in, once, when they scroll into view */
+@media (prefers-reduced-motion: no-preference) {
+  .dots .d72 { opacity: 0; transition: opacity .5s calc(var(--i) * 18ms); }
+  .s2.is-in .dots .d72 { opacity: var(--o); }
+  .chart .line { stroke-dasharray: 120; stroke-dashoffset: 120; transition: stroke-dashoffset 1.6s .2s ease-out; }
+  .s4.is-in .chart .line { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* language switch: numerals and symbols hold still, the words around them change */
+::view-transition-group(*) { animation-duration: .42s; animation-timing-function: cubic-bezier(.3, .7, .2, 1); }
+::view-transition-old(*), ::view-transition-new(*) { animation-duration: .42s; }
+/* theme switch: the new surface opens from the switch itself */
+html.vt-theme [style*="view-transition-name"] { view-transition-name: none !important; }
+html.vt-theme::view-transition-old(root) { animation: none; z-index: 0; }
+html.vt-theme::view-transition-new(root) { animation: vt-open .8s cubic-bezier(.3, .7, .2, 1) both; z-index: 1; }
+@keyframes vt-open { from { clip-path: circle(0 at var(--vx, 50%) var(--vy, 100%)); } to { clip-path: circle(160vmax at var(--vx, 50%) var(--vy, 100%)); } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }
+</style>
+</head>
+
+<body>
+<div class="stage">
+<main class="poster" id="poster" data-theme="night" data-lang="ja" lang="ja">
+
+  <section class="hero" id="hero">
+    <div class="art" id="art">
+      <canvas class="glow" id="glow" aria-hidden="true"></canvas>
+      <canvas class="art__live" id="live-art" role="img" aria-labelledby="art-desc"></canvas>
+      <canvas class="art__print" id="print-art" aria-hidden="true"></canvas>
+      <svg class="leaders" id="leaders" viewBox="0 0 297 236" preserveAspectRatio="none" aria-hidden="true">
+        <line id="ld-on"/><circle id="ld-on-dot" r=".75"/><line id="ld-off"/><circle id="ld-off-dot" r=".75"/>
+      </svg>
+      <div class="lens" id="lens" data-screen></div>
+      <div class="tip" id="tip" data-screen></div>
+      <p class="sr" id="art-desc" data-i="artDesc"></p>
+    </div>
+
+    <div class="lead">
+    <header class="title" data-vt>
+      <p class="title__date num" aria-hidden="true"><span id="fit-date">12.1</span></p>
+      <h1 class="title__name"><span id="fit-name" data-i="name"></span></h1>
+      <p class="title__when"><span data-i="when"></span><span class="pill" id="countdown" data-screen hidden></span></p>
+      <p class="title__theme"><span class="lbl" data-i="themeLabel"></span><strong data-i="theme"></strong></p>
+    </header>
+
+    <div class="story" data-vt>
+      <h2 data-i="h2"></h2>
+      <p data-i="p1"></p>
+      <p data-i="p2"></p>
+      <p class="small" data-i="mem"></p>
+      <p class="small live" id="live" data-screen></p>
+    </div>
+    </div>
+
+    <aside class="call call--on" id="call-on" data-vt>
+      <p class="call__pct"><span class="mark mark--on"></span><span><span id="pct-on">78</span><small>%</small></span></p>
+      <p class="call__txt" id="txt-on"></p>
+      <p class="small" data-i="onNote"></p>
+    </aside>
+    <aside class="call call--off" id="call-off" data-vt>
+      <p class="call__pct"><span class="mark mark--off"></span><span><span id="pct-off">22</span><small>%</small></span></p>
+      <p class="call__txt" id="txt-off"></p>
+      <p class="small" id="off-note" data-i="offNote"></p>
+      <p class="small" id="all-note" data-screen data-i="allNote" hidden></p>
+      <button class="btn" id="btn-all" type="button" aria-pressed="false" data-screen></button>
+    </aside>
+
+    <ul class="legend" id="legend" data-vt></ul>
+  </section>
+
+  <section class="know">
+    <article class="k k1" data-vt>
+      <h3 class="eq" aria-label="HIV ≠ AIDS"><span>HIV</span><svg class="op" viewBox="0 0 60 60" aria-hidden="true"><path d="M8 21H52M8 39H52M40 6 20 54"/></svg><span>AIDS</span></h3>
+      <p data-i="k1"></p>
+    </article>
+    <article class="k k2" data-vt>
+      <h3 class="eqh"><svg class="op" viewBox="0 0 60 60" aria-hidden="true"><path d="M8 21H52M8 39H52"/></svg><span data-i="k2h"></span></h3>
+      <ul class="routes">
+        <li><b data-i="r1a"></b><span data-i="r1b"></span></li>
+        <li><b data-i="r2a"></b><span data-i="r2b"></span></li>
+        <li><b data-i="r3a"></b><span data-i="r3b"></span></li>
+      </ul>
+    </article>
+    <article class="k k3" data-vt>
+      <h3 class="eqh"><svg class="op" viewBox="0 0 60 60" aria-hidden="true"><path d="M8 21H52M8 39H52M40 6 20 54"/></svg><span data-i="k3h"></span></h3>
+      <ul class="chips" id="chips"></ul>
+      <p class="small why" id="why" aria-live="polite"></p>
+    </article>
+  </section>
+
+  <section class="act">
+    <h3 class="act__h" data-i="actH" data-vt></h3>
+    <article class="s s1" data-vt>
+      <h4 data-i="s1h"></h4>
+      <ul><li data-i="s1a"></li><li data-i="s1b"></li><li data-i="s1c"></li></ul>
+    </article>
+    <article class="s s2" data-vt>
+      <h4 data-i="s2h"></h4>
+      <div id="dots72"></div>
+      <p class="cap" data-i="s2c"></p>
+      <p data-i="s2"></p>
+    </article>
+    <article class="s s3" data-vt>
+      <h4 data-i="s3h"></h4>
+      <div id="dotsWk"></div>
+      <p class="cap" data-i="s3c"></p>
+      <p data-i="s3"></p>
+    </article>
+    <article class="s s4" data-vt>
+      <h4 data-i="s4h"></h4>
+      <div class="uu">
+        <div class="uu__eq">
+          <p class="eq" aria-label="U = U"><span>U</span><svg class="op" viewBox="0 0 60 60" aria-hidden="true"><path d="M8 21H52M8 39H52"/></svg><span>U</span></p>
+          <p class="uu__cap" data-i="uuCap"></p>
+        </div>
+        <figure class="chart" id="chart"></figure>
+      </div>
+      <p data-i="s4"></p>
+    </article>
+  </section>
+
+  <footer class="close">
+    <p class="close__say" data-i="say" data-vt></p>
+    <a class="res" id="res" target="_blank" rel="noopener" data-vt>
+      <span class="res__qr" id="qr"></span>
+      <span class="res__t"><b data-i="resH"></b><span id="res-name"></span><span class="url" id="res-url"></span></span>
+    </a>
+    <p class="src" data-i="src"></p>
+  </footer>
+</main>
+</div>
+
+<nav class="dock" data-screen aria-label="Language, theme and export">
+  <button type="button" data-set-lang="ja" lang="ja">日本語</button>
+  <button type="button" data-set-lang="en" lang="en">English</button>
+  <button type="button" data-set-lang="zh" lang="zh-Hans">中文</button>
+  <i></i>
+  <button type="button" id="btn-theme"><span class="sw"></span><span id="lbl-theme"></span></button>
+  <i></i>
+  <button type="button" id="btn-print"><span data-i="dPrint"></span></button>
+  <button type="button" id="btn-png"><span id="lbl-png" data-i="dPng"></span><small>3508×4961</small></button>
+</nav>
+<div class="toast" id="toast" data-screen role="status"></div>
+
+<section class="after" data-screen>
+  <h2 data-i="aH"></h2>
+  <p data-i="aP1"></p>
+  <p data-i="aP2"></p>
+  <ul>
+    <li><b>297 × 420 mm</b><span data-i="aL1"></span></li>
+    <li><b>3508 × 4961 px</b><span data-i="aL2"></span></li>
+    <li><b>85,200</b><span data-i="aL3"></span></li>
+    <li><b>0</b><span data-i="aL4"></span></li>
+  </ul>
+</section>
+
+<script>
+(() => {
+'use strict';
+
+/* ================================================================
+   1. Figures. UNAIDS, Global HIV & AIDS statistics, Fact sheet 2026
+      (estimates for 2025). One dot stands for 1,000 people.
+   ================================================================ */
+const FIG = {
+  living: 41.0e6,          // people living with HIV
+  onART: 32.1e6,           // accessing antiretroviral therapy (78%)
+  unaware: 5.0e6,          // do not know their status
+  newInf: 1.2e6,           // acquired HIV in 2025
+  deaths: 570e3,           // died of AIDS-related illness in 2025
+  lost: 44.2e6             // died since the start of the epidemic
+};
+const RIBS = 820, ROWS = 50;                    // 820 x 50 = 41,000 dots
+const LIT_RIBS = FIG.onART / 1000 / ROWS;       // 642 ribs = 32,100 dots
+const UNK_RIBS = FIG.unaware / 1000 / ROWS;     // 100 ribs = 5,000 dots
+const MEM = FIG.lost / 1000;                    // 44,200 dots
+const LIT = LIT_RIBS / RIBS, UNK = 1 - UNK_RIBS / RIBS;
+const YEAR_S = 365 * 24 * 3600;
+const DAY = new Date(2026, 11, 1);
+
+/* ================================================================
+   2. Words. [日本語, English, 中文]
+   ================================================================ */
+const LANGS = ['ja', 'en', 'zh'], HTML_LANG = ['ja', 'en', 'zh-Hans'];
+const T = {
+  title: ['世界エイズデー 2026｜このリボンは、4,100万人。', 'World AIDS Day 2026 | This ribbon is 41 million people', '世界艾滋病日 2026｜这条丝带，是 4100 万人'],
+  artDesc: [
+    '41,000個の点で描いたレッドリボン。点ひとつがHIVとともに生きる1,000人を表し、治療を受けている78%は赤い点、残りの22%は輪郭だけの点になっています。',
+    'A red ribbon drawn from 41,000 dots. Each dot is 1,000 people living with HIV: the 78% on treatment are solid red, the remaining 22% are hollow rings.',
+    '由 41,000 个点组成的红丝带。每个点代表 1000 名 HIV 感染者：正在接受治疗的 78% 为红色实心点，其余 22% 为空心圆。'],
+  name: ['世界エイズデー', 'World AIDS Day', '世界艾滋病日'],
+  when: ['2026年12月1日（火）', 'Tuesday, 1 December 2026', '2026年12月1日 星期二'],
+  cdDays: ['あと{n}日', 'in {n} days', '还有 {n} 天'],
+  cdOne: ['あした', 'tomorrow', '就在明天'],
+  cdToday: ['今日です', 'today', '就是今天'],
+  themeLabel: ['令和8年度キャンペーンテーマ', 'Theme for 2026', '2026 年宣传主题'],
+  theme: ['あなたの話を聞かせてください', 'Ending AIDS starts with access.', '健康优先，共建共享，终结艾滋'],
+
+  h2: ['このリボンは、<br>4,100万人。', 'This ribbon is<br>41 million people.', '这条丝带，<br>是 4100 万人。'],
+  p1: [
+    '点ひとつが、HIVとともに生きる1,000人。世界では、およそ4,100万人がHIVとともに暮らしています（2025年）。',
+    'Each dot stands for 1,000 people living with HIV. Worldwide, that was about 41 million people in 2025.',
+    '每一个点，代表 1000 名艾滋病病毒（HIV）感染者。2025 年，全球感染者约有 4100 万人。'],
+  p2: [
+    '2025年には新たに120万人が感染し、57万人がエイズに関連する病気で亡くなりました。26秒に1人が感染し、1分に1人が亡くなっています。',
+    'In 2025 another 1.2 million people acquired HIV and 570,000 died of AIDS-related illness. That is one new infection every 26 seconds, and one death every minute.',
+    '2025 年新增感染 120 万人，57 万人死于艾滋病相关疾病，相当于每 26 秒有 1 人感染，每 1 分钟有 1 人离世。'],
+  live: [
+    'このページを開いてから、およそ <b>{a}</b> 人が感染し、<b>{b}</b> 人が亡くなりました。',
+    'Since you opened this page (estimated): new infections <b>{a}</b>, deaths <b>{b}</b>.',
+    '自你打开本页以来，估计已有 <b>{a}</b> 人新感染，<b>{b}</b> 人离世。'],
+  mem: [
+    'まわりの淡い点は44,200個。流行が始まってから失われた、4,420万人の命です。',
+    'The 44,200 faint dots around it are the 44.2 million people lost to AIDS-related illness since the epidemic began.',
+    '周围 44,200 个淡淡的点，是疫情出现以来因艾滋病相关疾病逝去的 4420 万人。'],
+
+  onTxt: ['<b>{n}</b>治療を受けている人', '<b>{n}</b>on treatment', '<b>{n}</b>正在接受治疗'],
+  onNote: [
+    '毎日の薬でウイルスの増殖を抑え、健康に暮らせます。',
+    'Daily medicine keeps the virus suppressed and people well.',
+    '每天服药，可以抑制病毒、保持健康。'],
+  offTxt: ['<b>{n}</b>まだ治療が届いていない人', '<b>{n}</b>still without treatment', '<b>{n}</b>尚未获得治疗'],
+  offNote: [
+    'うち約500万人は、自分が感染していることをまだ知りません。',
+    'About 5 million of them do not yet know they have HIV.',
+    '其中约 500 万人还不知道自己已经感染。'],
+  btnAll: ['全員に治療が届いたら', 'If treatment reached everyone', '如果人人都能得到治疗'],
+  btnBack: ['いまの世界に戻す', 'Back to today', '回到今天'],
+  allNote: [
+    '治療が全員に届けば、リボンは端まで赤くなります。エイズの終わりは、アクセスから始まります。',
+    'With treatment for all, the ribbon is red to its very end. Ending AIDS starts with access.',
+    '当治疗惠及每一个人，整条丝带都会变红。终结艾滋，从人人可及开始。'],
+
+  lgUnit: ['点ひとつ = 1,000人', '1 dot = 1,000 people', '1 个点 = 1000 人'],
+  lgOn: ['治療を受けている', 'on treatment', '正在治疗'],
+  lgOff: ['診断済み・未治療', 'diagnosed, not treated', '已确诊、未治疗'],
+  lgUnk: ['まだ感染を知らない', 'not yet diagnosed', '尚未确诊'],
+  lgMem: ['亡くなった人', 'lives lost', '已经逝去'],
+  zOn: ['治療を受けている', 'On treatment', '正在接受治疗'],
+  zOff: ['診断済み・未治療', 'Diagnosed, not on treatment', '已确诊、未治疗'],
+  zUnk: ['感染をまだ知らない', 'Not yet diagnosed', '尚不知道自己感染'],
+  zOffN: ['約390万人', 'about 3.9 million', '约 390 万人'],
+  zUnkN: ['約500万人', 'about 5 million', '约 500 万人'],
+
+  k1: [
+    'HIVはウイルスの名前。エイズは、治療しないまま免疫が大きく下がり、特定の病気を発症した状態です。早く見つけて治療を続ければ、エイズを発症することなく、長く健康に暮らせます。',
+    'HIV is a virus. AIDS is the late stage of an untreated infection, when the immune system is badly damaged. Found early and treated, HIV need not become AIDS, and people can expect a long, healthy life.',
+    'HIV 是艾滋病病毒；艾滋病（AIDS）是感染后长期不治疗、免疫系统严重受损的晚期阶段。早发现、早治疗并坚持服药，感染者可以不发病，长期健康地生活。'],
+  k2h: ['うつるのは<span class="big">3</span>つの経路だけ', 'It spreads in only <span class="big">3</span> ways', '传播途径只有 <span class="big">3</span> 条'],
+  r1a: ['性行為', 'Sex', '性接触'], r1b: ['コンドームを使わない性交など', 'without a condom or other protection', '没有保护措施的性行为'],
+  r2a: ['血液', 'Blood', '血液'], r2b: ['注射器や針の共用など', 'mainly shared needles and syringes', '共用针具、不安全的注射或输血'],
+  r3a: ['母子', 'Parent to child', '母婴'], r3b: ['妊娠・出産・授乳。治療でほぼ防げます', 'in pregnancy, birth or breastfeeding; treatment prevents almost all of it', '怀孕、分娩、哺乳；规范治疗可基本阻断'],
+  k3h: ['ふだんの接触では、うつらない', 'Everyday contact is safe', '日常接触不会传播'],
+  why0: [
+    'HIVは体の外ではすぐに感染する力を失います。だ液・汗・涙でうつることもありません。気になる項目を選ぶと、理由が分かります。',
+    'HIV quickly loses its ability to infect outside the body, and it is not passed on by saliva, sweat or tears. Select any item to see why.',
+    'HIV 离开人体后很快失去传染性，唾液、汗液、泪液也不会传播。点选任意一项，可以看到原因。'],
+  why0p: [
+    'HIVは体の外ではすぐに感染する力を失います。だ液・汗・涙でうつることもありません。',
+    'HIV quickly loses its ability to infect outside the body, and it is not passed on by saliva, sweat or tears.',
+    'HIV 离开人体后很快失去传染性，唾液、汗液、泪液也不会传播。'],
+
+  actH: ['いつ、何ができるか', 'What you can do, and when', '什么时候，可以做什么'],
+  s1h: ['ふだんから', 'Every time', '平时就做'],
+  s1a: ['<b>コンドーム</b>を最初から最後まで正しく使う。', '<b>Condoms</b>, used correctly from start to finish.', '<b>安全套</b>：全程正确使用。'],
+  s1b: [
+    '<b>PrEP（プレップ）</b>: 感染していない人が前もって薬を使う予防法。正しく続ければ、性行為での感染リスクを約99%下げます。',
+    '<b>PrEP</b>: medicine taken in advance by people who are HIV-negative. Used as prescribed, it cuts the risk from sex by about 99%.',
+    '<b>PrEP（暴露前预防）</b>：未感染者提前用药。遵医嘱规律使用，可使经性途径感染的风险降低约 99%。'],
+  s1c: ['<b>注射器や針</b>を共用しない。', '<b>Needles and syringes</b>: never share them.', '<b>针具</b>：绝不共用。'],
+  s2h: ['<b>72</b>時間以内', 'Within <b>72</b> hours', '<b>72</b> 小时内'],
+  s2c: ['点ひとつ = 1時間。早いほど効果的', '1 dot = 1 hour. The sooner, the better', '1 个点 = 1 小时，越早越有效'],
+  s2: [
+    '<b>PEP（ペップ）</b>: 感染したかもしれない出来事のあと、72時間以内に薬を始め、28日間続ける緊急の予防法。迷わず、すぐ医療機関へ。',
+    '<b>PEP</b>: emergency medicine after a possible exposure. It must start within 72 hours and is taken for 28 days. Go to a clinic or emergency department straight away.',
+    '<b>PEP（暴露后预防）</b>：发生高危行为后，须在 72 小时内开始服药，并连续服用 28 天。请立即就医。'],
+  s3h: ['<b>4</b>週間後から', 'From <b>4</b> weeks', '<b>4</b> 周以后'],
+  s3c: ['点ひとつ = 1週間', '1 dot = 1 week', '1 个点 = 1 周'],
+  s3: [
+    '<b>検査</b>を受けなければ、感染は分かりません。感染の機会から4週間たてば検査でき、3か月以降の結果が陰性なら感染していません。保健所なら無料・匿名です。',
+    '<b>Testing</b> is the only way to know. Most tests are reliable from about 4 weeks after a risk, and a negative result at 3 months is conclusive. Many clinics test free and in confidence.',
+    '只有<b>检测</b>才能知道是否感染。高危行为后约 4 周可以检测；满 3 个月仍为阴性，即可排除感染。各地疾控中心提供免费、保密的检测。'],
+  wkEarly: ['早すぎることも', 'may be too early', '可能还测不出'],
+  wk4: ['4週', '4 weeks', '4 周'], wk13: ['3か月', '3 months', '3 个月'],
+  s4h: ['陽性と分かったら', 'If the result is positive', '如果确诊感染'],
+  uuCap: ['検出されない＝<br>性感染しない', 'Undetectable =<br>Untransmittable', '检测不到 =<br>不具传染力'],
+  s4: [
+    'すぐに<b>治療</b>を始め、続けること。血液中のウイルス量は多くの場合6か月以内に検出できないほど減り、その状態が続けば、性行為でパートナーに感染させることはありません。',
+    'Start <b>treatment</b> and keep taking it. It usually drives the virus below detectable levels within 6 months. A person who stays undetectable does not pass HIV on through sex.',
+    '尽快开始<b>治疗</b>并坚持服药。血液中的病毒量通常在 6 个月内降到检测不到的水平；只要持续检测不到，就不会通过性行为传染给伴侣。'],
+  cTitle: ['血液1mL中のウイルス量（模式図）', 'Virus per mL of blood (illustrative)', '每毫升血液中的病毒量（示意）'],
+  cX: ['治療開始からの月数', 'months on treatment', '开始治疗后的月数'],
+  cThr: ['200コピー', '200 copies', '200 拷贝'],
+  cZone: ['性行為でうつらない', 'untransmittable', '不经性行为传播'],
+  cTip: ['{m}か月：約{v}コピー', 'month {m}: about {v} copies', '第 {m} 个月：约 {v} 拷贝'],
+  cTip0: ['治療開始時：約{v}コピー', 'at the start: about {v} copies', '治疗开始时：约 {v} 拷贝'],
+  cAlt: [
+    '治療を始めると、血液1mLあたりのウイルス量はおよそ8万コピーから下がり、2か月から3か月で200コピーを下回り、6か月後には検出できなくなる、という模式図。',
+    'Illustrative chart: after treatment starts, virus in the blood falls from about 80,000 copies per mL, passes below 200 copies between months 2 and 3, and is undetectable by month 6.',
+    '示意图：开始治疗后，每毫升血液中的病毒量从约 8 万拷贝下降，在第 2 到第 3 个月降至 200 拷贝以下，6 个月后检测不到。'],
+
+  say: [
+    'HIVとともに働き、学び、恋をし、子どもを育てる人がいます。話したいときに、聞いてくれる人がいること。それも、予防のひとつです。',
+    'People with HIV work, study, fall in love and raise children. What keeps many away from testing and treatment is the fear of being judged. Listening without judgement is prevention too.',
+    '感染者同样在工作、学习、恋爱、养育孩子。让人不敢检测、不敢治疗的，往往是歧视。不歧视，就是在预防。'],
+  resH: ['検査できる場所をさがす', 'Data, guidance and where to turn', '了解防治知识与检测服务'],
+  resName: ['HIV検査・相談マップ', 'UNAIDS', '中国疾控中心性病艾滋病预防控制中心'],
+  resUrl: ['https://www.mhlw.go.jp/hivkensa/', 'https://www.unaids.org', 'https://www.chinaaids.cn'],
+  src: [
+    '数値：UNAIDS「Fact sheet 2026」（2025年の推計）。予防・検査・治療：WHO、CDC。一般的な情報であり、診断や治療に代わるものではありません。心配なときは、医療機関か保健所へ。',
+    'Figures: UNAIDS, Fact sheet 2026 (estimates for 2025). Prevention, testing and treatment: WHO, CDC. General information, not a substitute for medical advice. If you are worried, talk to a health professional.',
+    '数据：联合国艾滋病规划署（UNAIDS）Fact sheet 2026（2025 年估计值）。预防、检测与治疗：WHO、CDC。本海报为一般科普信息，不能替代诊疗建议；如有疑虑，请咨询医疗机构或当地疾控中心。'],
+
+  dPrint: ['A3で印刷', 'Print A3', '打印 A3'],
+  dPng: ['PNGで保存', 'Save PNG', '保存 PNG'],
+  dBusy: ['書き出し中…', 'Rendering…', '正在生成…'],
+  thNight: ['夜', 'Night', '夜'], thPaper: ['紙', 'Paper', '纸'],
+  tDone: ['PNGを保存しました（3508 × 4961 px、300 dpi）', 'PNG saved (3508 × 4961 px, 300 dpi)', 'PNG 已保存（3508 × 4961 像素，300 dpi）'],
+  tFail: ['このブラウザでは書き出せませんでした。「A3で印刷」からPDFに保存してください。', 'This browser could not export the image. Use Print A3 and save as PDF instead.', '当前浏览器无法导出图片，请使用“打印 A3”另存为 PDF。'],
+
+  aH: ['ポスターにする', 'Make it a poster', '做成海报'],
+  aP1: [
+    'このページは、そのままA3ポスターです。「A3で印刷」は文字をベクターのまま、点描を300 dpiで出力します。印刷ダイアログでは用紙をA3、余白を「なし」にして、「背景のグラフィック」をオンにしてください。',
+    'This page is the poster. Print A3 keeps the type as vectors and renders the dot art at 300 dpi. In the print dialog, choose A3 paper, set margins to none and turn background graphics on.',
+    '这个页面本身就是一张 A3 海报。“打印 A3”会保留矢量文字，并以 300 dpi 输出点阵图。请在打印对话框中选择 A3 纸张、边距设为“无”，并勾选“背景图形”。'],
+  aP2: [
+    '「PNGで保存」は、印刷所にそのまま渡せる3508 × 4961ピクセルの画像を書き出します。インクを節約したいときは、先に白い「紙」テーマへ切り替えてください。',
+    'Save PNG exports a 3508 × 4961 pixel image you can hand straight to a print shop. To save ink, switch to the white Paper theme first.',
+    '“保存 PNG”会导出 3508 × 4961 像素的图片，可直接交给印刷店。想节省墨水，请先切换到白色的“纸”主题。'],
+  aL1: ['A3、縦。1枚に収まります', 'A3 portrait, on a single sheet', 'A3 竖版，正好一页'],
+  aL2: ['300 dpi。PNGにも解像度を記録', '300 dpi, written into the PNG itself', '300 dpi，分辨率写入 PNG 文件'],
+  aL3: ['個の点。1点が1,000人', 'dots, each one 1,000 people', '个点，每个点代表 1000 人'],
+  aL4: ['外部ファイル。QRコードもページ内で生成', 'external files. The QR code is generated in the page too', '个外部文件，二维码也在页面内生成']
+};
+// everyday contact that does not transmit HIV: [label, why] x [ja, en, zh]
+const CHIPS = [
+  [['握手・ハグ', 'Handshakes and hugs', '握手、拥抱'],
+   ['HIVは、皮ふのふれあいや汗ではうつりません。', 'HIV is not passed on by touch or by sweat.', '皮肤接触和汗液不会传播 HIV。']],
+  [['軽いキス', 'Kissing', '礼节性亲吻'],
+   ['だ液にふくまれるウイルスはごくわずかで、感染は起こりません。', 'Saliva carries far too little virus to pass HIV on.', '唾液中的病毒量极少，不足以造成感染。']],
+  [['せき・くしゃみ', 'Coughs and sneezes', '咳嗽、打喷嚏'],
+   ['HIVは、空気や飛まつではうつりません。', 'HIV does not travel through the air.', 'HIV 不会通过空气或飞沫传播。']],
+  [['同じ食器・同じ鍋', 'Shared food and dishes', '共用餐具、同桌吃饭'],
+   ['食べ物や飲み物を通してうつることはありません。', 'HIV is not passed on through food or drink.', '食物和饮水不会传播 HIV。']],
+  [['お風呂・プール', 'Baths and pools', '共用浴室、泳池'],
+   ['HIVは水の中では生きられず、体の外ではすぐに感染する力を失います。', 'HIV does not survive in water, and it soon dies outside the body.', 'HIV 在水中无法存活，离开人体后也很快失去活性。']],
+  [['トイレ', 'Toilet seats', '共用马桶'],
+   ['便座など、物の表面からうつることはありません。', 'HIV is not picked up from surfaces.', '物体表面不会传播 HIV。']],
+  [['蚊', 'Mosquitoes', '蚊虫叮咬'],
+   ['HIVは蚊の体内で増えず、蚊が人に血液を注入することもありません。', 'HIV cannot multiply in insects, and a mosquito does not inject blood.', 'HIV 不能在蚊子体内繁殖，蚊子叮人时也不会注入血液。']],
+  [['同じ職場・同じ教室', 'Working or studying together', '一起工作、学习'],
+   ['毎日の生活をともにしても、感染することはありません。', 'Sharing daily life carries no risk.', '共同工作、学习和生活，没有感染风险。']]
+];
+
+/* ================================================================
+   3. Small helpers
+   ================================================================ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const mulberry32 = a => () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const root = document.documentElement, poster = $('#poster'), hero = $('#hero'), artEl = $('#art');
+const S = {
+  lang: 'ja', theme: 'night', compact: false,
+  lit: REDUCED ? LIT : 0, all: false, intro: REDUCED ? 1 : 0, introDone: REDUCED,
+  yaw: 0, pitch: 0, tiltX: 0, tiltY: 0, lensMag: 0, lensOn: false, px: 0, py: 0, hover: false, poster: false,
+  opened: Date.now()
+};
+const li = () => LANGS.indexOf(S.lang);
+const t = key => T[key][li()];
+
+/* ================================================================
+   4. The art: geometry
+      A ribbon is a strip. Its centre line is a spline; 820 ribs of
+      50 dots are laid across it on a staggered, lightly jittered
+      lattice, so 41,000 dots sit evenly on the band.
+   ================================================================ */
+const ART = { w: 297, h: 236, cx: 171, cy: 117.5, rh: 176 };          // poster layout, in units
+const ART_COMPACT = { w: 100, h: 124, cx: 50, cy: 61, rh: 106 };       // narrow-screen layout
+const HALF = 0.066;                                                    // band half width, ribbon height ~ 1
+const CTRL = [
+  [-0.240, -0.500], [-0.162, -0.348], [-0.084, -0.196], [0.000, -0.036],
+  [0.092, 0.132], [0.160, 0.284], [0.122, 0.412], [0.000, 0.460],
+  [-0.122, 0.412], [-0.160, 0.284], [-0.092, 0.132], [0.000, -0.036],
+  [0.084, -0.196], [0.162, -0.348], [0.240, -0.500]
+];
+
+function buildRibbon() {
+  // centripetal Catmull-Rom through the control points, then an arc-length table
+  const cat = (p0, p1, p2, p3, u) => {
+    const d = (a, b) => Math.sqrt(Math.hypot(b[0] - a[0], b[1] - a[1])) || 1e-6;
+    const t1 = d(p0, p1), t2 = t1 + d(p1, p2), t3 = t2 + d(p2, p3), tt = t1 + (t2 - t1) * u;
+    const L = (a, b, ta, tb) => { const w = (tt - ta) / (tb - ta); return [a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w]; };
+    const A1 = L(p0, p1, 0, t1), A2 = L(p1, p2, t1, t2), A3 = L(p2, p3, t2, t3);
+    return L(L(A1, A2, 0, t2), L(A2, A3, t1, t3), t1, t2);
+  };
+  const n = CTRL.length, ext = (a, b) => [2 * a[0] - b[0], 2 * a[1] - b[1]];
+  const all = [ext(CTRL[0], CTRL[1]), ...CTRL, ext(CTRL[n - 1], CTRL[n - 2])], SEG = 240, pts = [];
+  for (let i = 0; i < n - 1; i++) for (let k = 0; k < SEG; k++) pts.push(cat(all[i], all[i + 1], all[i + 2], all[i + 3], k / SEG));
+  pts.push(CTRL[n - 1].slice());
+  const cum = new Float64Array(pts.length);
+  for (let i = 1; i < pts.length; i++) cum[i] = cum[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+  const total = cum[cum.length - 1];
+  const sXA = cum[3 * SEG] / total, sTop = cum[7 * SEG] / total, sXB = cum[11 * SEG] / total;
+  const at = f => {                                   // point and unit tangent at arc fraction f
+    const target = clamp(f, 0, 1) * total;
+    let lo = 0, hi = cum.length - 2;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (cum[mid] <= target) lo = mid; else hi = mid - 1; }
+    const a = pts[lo], b = pts[lo + 1], seg = cum[lo + 1] - cum[lo] || 1e-9, w = (target - cum[lo]) / seg;
+    return [a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w, (b[0] - a[0]) / seg, (b[1] - a[1]) / seg];
+  };
+  // the strip in 3D: tail A passes behind, tail B in front, and the loop lifts and rolls over the top
+  const ZC = 0.034, ZB = 0.05, TW = 0.62;
+  const frame = f => {
+    const [x, y, tx, ty] = at(f);
+    const loop = smooth(sXA, sTop, f) * (1 - smooth(sTop, sXB, f));
+    const z = ZC * (2 * smooth(sXA - 0.02, sXB + 0.02, f) - 1) + ZB * loop, psi = TW * loop * loop;
+    return { x, y, z, wx: -ty * Math.cos(psi), wy: tx * Math.cos(psi), wz: Math.sin(psi) };
+  };
+  const rnd = mulberry32(20261201), N = RIBS * ROWS, STR = 8;
+  const dots = new Float32Array(N * STR), pitchS = total / RIBS, pitchV = 2 * HALF / ROWS, JIT = 0.34;
+  // where the front tail covers the back one, the back dots are dimmed
+  const front = []; let fx0 = 1e9, fx1 = -1e9, fy0 = 1e9, fy1 = -1e9;
+  for (let i = 0; i <= 150; i++) {
+    const f = sXB - 0.09 + 0.2 * i / 150; if (f > 1) break;
+    const p = at(f); front.push(p);
+    fx0 = Math.min(fx0, p[0]); fx1 = Math.max(fx1, p[0]); fy0 = Math.min(fy0, p[1]); fy1 = Math.max(fy1, p[1]);
+  }
+  const under = (x, y) => {
+    if (x < fx0 - HALF || x > fx1 + HALF || y < fy0 - HALF || y > fy1 + HALF) return false;
+    for (let i = 0; i < front.length - 1; i++) {
+      const a = front[i], b = front[i + 1], dx = b[0] - a[0], dy = b[1] - a[1];
+      const u = clamp(((x - a[0]) * dx + (y - a[1]) * dy) / (dx * dx + dy * dy), 0, 1);
+      if (Math.hypot(x - a[0] - dx * u, y - a[1] - dy * u) < HALF * 0.985) return true;
+    }
+    return false;
+  };
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9, o = 0;
+  for (let i = 0; i < RIBS; i++) for (let j = 0; j < ROWS; j++) {
+    const f = (i + 0.5 + (rnd() - 0.5) * JIT) / RIBS;
+    const v = -HALF + (j + 0.25 + 0.5 * (i & 1) + (rnd() - 0.5) * JIT) * pitchV;
+    const F = frame(f), Fa = frame(f - 0.5 / RIBS), Fb = frame(f + 0.5 / RIBS);
+    const x = F.x + F.wx * v, y = F.y + F.wy * v, z = F.z + F.wz * v;
+    // bending the strip in its own plane squeezes the inner edge; dot size follows the local area
+    const stretch = Math.hypot((Fb.x + Fb.wx * v) - (Fa.x + Fa.wx * v), (Fb.y + Fb.wy * v) - (Fa.y + Fa.wy * v)) / pitchS;
+    const area = Math.max(0.2, stretch * Math.hypot(F.wx, F.wy));
+    dots[o++] = x; dots[o++] = y; dots[o++] = z;
+    dots[o++] = (i + 0.5) / RIBS;
+    dots[o++] = clamp(Math.sqrt(area), 0.55, 1.25);
+    dots[o++] = (f < sTop && f > sXA - 0.12 && under(x, y)) ? 1 : 0;
+    dots[o++] = rnd(); dots[o++] = rnd();
+    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+  }
+  // centre and scale so the ribbon is exactly 1 unit tall
+  const hgt = y1 - y0, mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+  for (let k = 0; k < N; k++) { dots[k * STR] = (dots[k * STR] - mx) / hgt; dots[k * STR + 1] = (dots[k * STR + 1] - my) / hgt; dots[k * STR + 2] /= hgt; }
+  // rib centres and band edges: for picking, leader lines and the tint under the lit part
+  const mid = new Float32Array((RIBS + 1) * 3), edge = new Float32Array((RIBS + 1) * 8);
+  for (let i = 0; i <= RIBS; i++) {
+    const F = frame(i / RIBS), X = v => (v - mx) / hgt, Y = v => (v - my) / hgt;
+    mid.set([X(F.x), Y(F.y), F.z / hgt], i * 3);
+    edge.set([X(F.x - F.wx * HALF), Y(F.y - F.wy * HALF), (F.z - F.wz * HALF) / hgt, i / RIBS,
+              X(F.x + F.wx * HALF), Y(F.y + F.wy * HALF), (F.z + F.wz * HALF) / hgt, i / RIBS], i * 8);
+  }
+  return { dots, mid, edge, N, STR, pitch: pitchS / hgt, half: HALF / hgt };
+}
+
+// 44,200 faint dots gathered around the ribbon, thinning toward the edges
+function buildMemorial(art) {
+  const rnd = mulberry32(19810605), mem = new Float32Array(MEM * 5), k0 = art.rh / 176;
+  const gauss = () => (rnd() + rnd() + rnd() + rnd() - 2) / 0.5774;
+  for (let k = 0; k < MEM;) {
+    let x, y;
+    if (rnd() < 0.8) { x = art.cx + gauss() * 58 * k0; y = art.cy + gauss() * 54 * k0; }
+    else { x = rnd() * art.w; y = rnd() * art.h; }
+    if (x < 0 || x > art.w || y < 0 || y > art.h) continue;
+    if (rnd() < smooth(art.h - 46 * k0, art.h - 2, y)) continue;
+    mem[k * 5] = x / art.w; mem[k * 5 + 1] = y / art.h;
+    mem[k * 5 + 2] = (0.55 + rnd() * rnd() * 1.5) * k0;
+    mem[k * 5 + 3] = rnd(); mem[k * 5 + 4] = rnd();
+    k++;
+  }
+  return mem;
+}
+
+// the same transform the vertex shader applies, for picking and for the leader lines
+function project(x, y, z, art, yaw, pitch) {
+  const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pitch), sp = Math.sin(pitch);
+  const X = cy * x + sy * z, Z0 = cy * z - sy * x, Y = cp * y - sp * Z0, Z = cp * Z0 + sp * y, k = 1 / (1 - Z * 0.6);
+  return [art.cx + X * k * art.rh, art.cy - Y * k * art.rh];
+}
+
+/* ================================================================
+   5. The art: appearance, defined once and used by both renderers
+      night  = points of light (additive);  paper = ink (opaque)
+   ================================================================ */
+const LOOK = {
+  night: { core: 0.40, k: 4.5, memA: [0.10, 0.42], memCol: [1.0, 0.80, 0.72], memR: 0.72, wash: null, glow: 'rgba(255, 64, 72, .3)' },
+  paper: { core: 0.47, k: 1.0, memA: [0.10, 0.30], memCol: [0, 0, 0], memR: 0.9, wash: [0.84, 0, 0.15, 0.30], glow: null }
+};
+const disc = (d, r, aa) => 1 - smooth(r - aa, r + aa, d);
+// premultiplied RGBA of one dot at normalised radius d; px = one pixel in the same unit
+function dotColor(theme, kind, d, px) {
+  if (theme === 'night') {
+    const rc = 1 / 4.5;
+    if (kind === 'lit') {
+      const a = disc(d, rc, px * 0.6), hot = smooth(1.0, 2.6, rc / px), m = 1 + (smooth(0, rc * 0.85, d) - 1) * hot;
+      const g1 = Math.max(0, 1 - d * 1.6), g2 = 1 - d, glow = g1 * g1 * 0.30 + g2 * g2 * 0.055;
+      return [a + glow, (0.70 + (0.14 - 0.70) * m) * a + 0.04 * glow, (0.50 + (0.18 - 0.50) * m) * a + 0.09 * glow, Math.max(a, glow)];
+    }
+    const a = (disc(d, rc, px * 0.6) - disc(d, rc - 0.075, px * 0.6)) * (kind === 'off' ? 0.80 : 0.42);
+    return [0.66 * a, 0.70 * a, 0.84 * a, a];
+  }
+  if (kind === 'lit') { const a = disc(d, 0.9, px * 0.6); return [0.78 * a, 0, 0.11 * a, a]; }
+  const a = (disc(d, 0.9, px * 0.6) - disc(d, 0.6, px * 0.6)) * (kind === 'off' ? 1 : 0.5);
+  return [0.2 * a, 0.2 * a, 0.2 * a, a];
+}
+
+/* ---------- 2D renderer: print, PNG export, and the no-WebGL fallback ---------- */
+function sprite(R, fn) {
+  const size = Math.max(4, Math.ceil(R * 2) + 2), c = document.createElement('canvas');
+  c.width = c.height = size;
+  const g = c.getContext('2d'), img = g.createImageData(size, size), m = size / 2;
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    const d = Math.hypot(x + 0.5 - m, y + 0.5 - m) / R, o = (y * size + x) * 4;
+    if (d > 1) continue;
+    const p = fn(d, 1 / R), a = clamp(p[3], 1e-6, 1);
+    img.data[o] = Math.min(255, p[0] / a * 255); img.data[o + 1] = Math.min(255, p[1] / a * 255); img.data[o + 2] = Math.min(255, p[2] / a * 255); img.data[o + 3] = a * 255;
+  }
+  g.putImageData(img, 0, 0);
+  return { c, k: m / R };
+}
+// glow behind the lit part: the centre line is stroked off-canvas and only its blurred shadow lands in view
+function paintGlow(ctx, W, art, lit, color) {
+  const M = RIB.mid, PX = W / art.w, far = W * 2, n = Math.round(lit * RIBS);
+  ctx.save();
+  ctx.shadowColor = color; ctx.shadowBlur = 11 * PX * art.rh / ART.rh; ctx.shadowOffsetX = far;
+  ctx.lineWidth = RIB.half * 2 * art.rh * PX; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  for (let i = 0; i <= n; i += 2) ctx.lineTo((art.cx + M[i * 3] * art.rh) * PX - far, (art.cy - M[i * 3 + 1] * art.rh) * PX);
+  if (n > 0) ctx.stroke();
+  ctx.restore();
+}
+function draw2D(ctx, W, H, opt) {
+  const art = opt.art, look = LOOK[opt.theme], PX = W / art.w, lit = opt.lit == null ? LIT : opt.lit;
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, W, H);
+  if (look.glow) paintGlow(ctx, W, art, lit, look.glow);
+  // lives lost
+  const ms = sprite(16, d => { const a = disc(d, look.memR, 0.06); return [look.memCol[0] * a, look.memCol[1] * a, look.memCol[2] * a, a]; });
+  const mem = opt.mem;
+  for (let k = 0; k < MEM; k++) {
+    let r = 0.17 * PX * mem[k * 5 + 2], a = look.memA[0] + (look.memA[1] - look.memA[0]) * mem[k * 5 + 3];
+    if (r < 0.9) { a *= r * r / 0.81; r = 0.9; }
+    const e = r * ms.k; ctx.globalAlpha = a;
+    ctx.drawImage(ms.c, mem[k * 5] * W - e, mem[k * 5 + 1] * H - e, e * 2, e * 2);
+  }
+  const R = RIB, X = v => (art.cx + v * art.rh) * PX, Y = v => (art.cy - v * art.rh) * PX;
+  // a flat tint under the lit part of the band (ink only)
+  if (look.wash) {
+    const E = R.edge, n = Math.round(lit * RIBS), w = look.wash;
+    ctx.globalAlpha = 1; ctx.fillStyle = `rgba(${w[0] * 255 | 0},${w[1] * 255 | 0},${w[2] * 255 | 0},${w[3]})`;
+    for (let a = 0; a < n; a += 40) {                 // short pieces keep the self-crossing band honest
+      const b = Math.min(n, a + 40);
+      ctx.beginPath();
+      for (let i = a; i <= b; i++) ctx.lineTo(X(E[i * 8]), Y(E[i * 8 + 1]));
+      for (let i = b; i >= a; i--) ctx.lineTo(X(E[i * 8 + 4]), Y(E[i * 8 + 5]));
+      ctx.closePath(); ctx.fill();
+    }
+  }
+  // the 41,000
+  const RS = R.pitch * art.rh * PX * look.core * look.k, sp = {};
+  for (const kind of ['lit', 'off', 'unk']) sp[kind] = sprite(Math.max(2, RS * 2), (d, px) => dotColor(opt.theme, kind, d, px));
+  ctx.globalCompositeOperation = opt.theme === 'night' ? 'lighter' : 'source-over';
+  const D = R.dots, STR = R.STR;
+  for (let k = 0; k < R.N; k++) {
+    const o = k * STR, f = D[o + 3], s = f < lit ? sp.lit : (f < UNK ? sp.off : sp.unk);
+    const e = RS * D[o + 4] * (1 + D[o + 2] * 0.9) * s.k;
+    ctx.globalAlpha = D[o + 5] ? 0.3 : 1;
+    ctx.drawImage(s.c, X(D[o]) - e, Y(D[o + 1]) - e, e * 2, e * 2);
+  }
+  ctx.restore();
+}
+
+/* ---------- WebGL renderer: the live one ---------- */
+const GLSL_COMMON = `#version 300 es
+precision highp float;
+uniform vec2 uRes, uCenter; uniform float uScale, uTime, uIntro, uYaw, uPitch, uCalm; uniform vec4 uLens;
+vec2 place(vec3 p, out float persp) {
+  float cy = cos(uYaw), sy = sin(uYaw), cp = cos(uPitch), sp = sin(uPitch);
+  p = vec3(cy * p.x + sy * p.z, p.y, cy * p.z - sy * p.x);
+  p = vec3(p.x, cp * p.y - sp * p.z, cp * p.z + sp * p.y);
+  persp = 1.0 / (1.0 - p.z * 0.6);
+  return uCenter + vec2(p.x, -p.y) * persp * uScale;
+}
+// a fisheye loupe: dots near the pointer spread apart and swell
+vec2 lens(vec2 q, inout float r) {
+  if (uLens.w <= 0.001) return q;
+  vec2 d = q - uLens.xy; float n = length(d) / uLens.z;
+  if (n >= 1.0) return q;
+  float s = (uLens.w + 1.0) / (uLens.w * n + 1.0);
+  r *= mix(1.0, s, 0.82);
+  return uLens.xy + d * s;
+}
+vec4 toClip(vec2 q) { return vec4(q.x / uRes.x * 2.0 - 1.0, 1.0 - q.y / uRes.y * 2.0, 0.0, 1.0); }
+`;
+const VS_DOTS = GLSL_COMMON + `
+layout(location=0) in vec3 aPos; layout(location=1) in vec4 aMeta; layout(location=2) in float aRnd;
+uniform float uLit, uUnk, uSprite;
+out float vLit; out float vUnk; out float vGain; out float vR;
+void main() {
+  float f = aMeta.x;
+  // arrival: every dot flies in from a loose cloud, the tail end first
+  float k = clamp((uIntro - (f * 0.56 + aMeta.w * 0.09)) / 0.35, 0.0, 1.0), e = 1.0 - pow(1.0 - k, 3.0);
+  vec3 away = aPos * 1.9 + vec3(sin(aMeta.w * 91.7 + f * 9.0), cos(aRnd * 73.1 + f * 5.0), sin(aRnd * 37.0)) * vec3(0.55, 0.45, 0.6);
+  vec3 p = mix(away, aPos, e);
+  p.xy += (1.0 - uCalm) * 0.0009 * vec2(sin(uTime * 0.7 + aMeta.w * 44.0), cos(uTime * 0.6 + aRnd * 44.0));
+  float persp; vec2 q = place(p, persp);
+  float r = uSprite * aMeta.y * (1.0 + aPos.z * 0.9) * persp;
+  q = lens(q, r);
+  float gain = mix(1.0, 0.3, aMeta.z) * e;
+  gain *= 1.0 - (1.0 - uCalm) * 0.16 * (0.5 + 0.5 * sin(uTime * (1.1 + aRnd * 2.2) + aMeta.w * 40.0));
+  // a slow pulse runs along the lit dots and stops where treatment stops
+  float head = fract(uTime / 9.0) * 1.9 - 0.25, pulse = exp(-pow((f - head) / 0.03, 2.0)) * step(f, uLit) * (1.0 - uCalm) * step(1.0, uIntro);
+  gain *= 1.0 + 0.55 * pulse; r *= 1.0 + 0.22 * pulse;
+  if (r < 1.1) { gain *= r * r / 1.21; r = 1.1; }
+  vLit = 1.0 - smoothstep(uLit - 0.003, uLit + 0.003, f + (aMeta.w - 0.5) * 0.004);
+  vUnk = step(uUnk, f); vGain = gain; vR = r;
+  gl_Position = toClip(q); gl_PointSize = r * 2.0;
+}`;
+const FS_DOTS = `#version 300 es
+precision highp float;
+in float vLit; in float vUnk; in float vGain; in float vR;
+uniform float uTheme;
+out vec4 o;
+float disc(float d, float r, float aa) { return 1.0 - smoothstep(r - aa, r + aa, d); }
+void main() {
+  float d = length(gl_PointCoord - 0.5) * 2.0;
+  if (d > 1.0) discard;
+  float aa = 0.6 / vR;
+  if (uTheme < 0.5) {
+    const float rc = 1.0 / 4.5;
+    float a = disc(d, rc, aa), m = mix(1.0, smoothstep(0.0, rc * 0.85, d), smoothstep(1.0, 2.6, rc * vR));
+    float g1 = max(0.0, 1.0 - d * 1.6), g2 = 1.0 - d, glow = g1 * g1 * 0.30 + g2 * g2 * 0.055;
+    vec3 lit = vec3(1.0, mix(0.70, 0.14, m), mix(0.50, 0.18, m)) * a + vec3(1.0, 0.04, 0.09) * glow;
+    vec3 off = vec3(0.66, 0.70, 0.84) * (a - disc(d, rc - 0.075, aa)) * mix(0.80, 0.42, vUnk);
+    o = vec4(mix(off, lit, vLit) * vGain, 0.0);                    // alpha 0 + premultiplied = light added to the page
+  } else {
+    float a = disc(d, 0.9, aa);
+    vec4 lit = vec4(0.78, 0.0, 0.11, 1.0) * a;
+    vec4 off = vec4(0.2, 0.2, 0.2, 1.0) * (a - disc(d, 0.6, aa)) * mix(1.0, 0.5, vUnk);
+    o = mix(off, lit, vLit) * vGain;
+  }
+}`;
+const VS_MEM = GLSL_COMMON + `
+layout(location=0) in vec2 aBase; layout(location=1) in vec3 aM;
+uniform float uPx, uA0, uA1; uniform vec2 uPar;
+out float vA; out float vR;
+void main() {
+  vec2 q = aBase * uRes;
+  q += (1.0 - uCalm) * uPx * 0.9 * vec2(sin(uTime * (0.10 + aM.y * 0.22) + aM.z * 60.0), cos(uTime * (0.08 + aM.z * 0.2) + aM.y * 60.0));
+  q += uPar * uPx * (0.6 + aM.x * 2.4);                           // nearer dots slide further with the pointer
+  float r = 0.17 * uPx * aM.x, a = mix(uA0, uA1, aM.y);
+  a *= 1.0 - (1.0 - uCalm) * 0.35 * (0.5 + 0.5 * sin(uTime * (0.5 + aM.z * 1.4) + aM.y * 50.0));
+  q = lens(q, r);
+  if (r < 0.9) { a *= r * r / 0.81; r = 0.9; }
+  vA = a * smoothstep(0.0, 0.45, uIntro); vR = r;
+  gl_Position = toClip(q); gl_PointSize = r * 2.0;
+}`;
+const FS_MEM = `#version 300 es
+precision highp float;
+in float vA; in float vR; uniform vec3 uCol; uniform float uDisc; out vec4 o;
+void main() {
+  float d = length(gl_PointCoord - 0.5) * 2.0;
+  float a = (1.0 - smoothstep(uDisc - 0.9 / vR, uDisc + 0.9 / vR, d)) * vA;
+  o = vec4(uCol * a, a);
+}`;
+const VS_WASH = GLSL_COMMON + `
+layout(location=0) in vec4 aE; uniform float uLit; out float vOn;
+void main() { float persp; vec2 q = place(aE.xyz, persp); vOn = step(aE.w, uLit); gl_Position = toClip(q); }`;
+const FS_WASH = `#version 300 es
+precision highp float;
+in float vOn; uniform vec4 uCol; uniform float uIntro; out vec4 o;
+void main() { if (vOn < 0.5) discard; o = vec4(uCol.rgb * uCol.a, uCol.a) * smoothstep(0.75, 1.0, uIntro); }`;
+
+function createGL(canvas) {
+  const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' });
+  if (!gl) return null;
+  const make = (vs, fs) => {
+    const p = gl.createProgram();
+    for (const [type, src] of [[gl.VERTEX_SHADER, vs], [gl.FRAGMENT_SHADER, fs]]) {
+      const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+      gl.attachShader(p, s);
+    }
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    const u = {};
+    for (let i = 0, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); i < n; i++) { const name = gl.getActiveUniform(p, i).name; u[name] = gl.getUniformLocation(p, name); }
+    return { p, u };
+  };
+  const vao = (data, layout, stride) => {
+    const v = gl.createVertexArray(), b = gl.createBuffer();
+    gl.bindVertexArray(v); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    layout.forEach(([loc, size, off]) => { gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, stride * 4, off * 4); });
+    gl.bindVertexArray(null);
+    return { v, b };
+  };
+  let P, V, memArt = null;
+  const init = () => {
+    P = { dots: make(VS_DOTS, FS_DOTS), mem: make(VS_MEM, FS_MEM), wash: make(VS_WASH, FS_WASH) };
+    V = {
+      dots: vao(RIB.dots, [[0, 3, 0], [1, 4, 3], [2, 1, 7]], 8),
+      wash: vao(RIB.edge, [[0, 4, 0]], 4),
+      mem: vao(new Float32Array(MEM * 5), [[0, 2, 0], [1, 3, 2]], 5)
+    };
+    memArt = null;
+  };
+  init();
+  canvas.addEventListener('webglcontextlost', e => e.preventDefault());
+  canvas.addEventListener('webglcontextrestored', init);
+  const common = (pr, st) => {
+    const u = pr.u, PX = canvas.width / st.art.w;
+    gl.useProgram(pr.p);
+    gl.uniform2f(u.uRes, canvas.width, canvas.height);
+    gl.uniform2f(u.uCenter, st.art.cx * PX, st.art.cy * PX);
+    gl.uniform1f(u.uScale, st.art.rh * PX);
+    gl.uniform1f(u.uTime, st.time); gl.uniform1f(u.uIntro, st.intro);
+    gl.uniform1f(u.uYaw, st.yaw); gl.uniform1f(u.uPitch, st.pitch); gl.uniform1f(u.uCalm, st.calm);
+    gl.uniform4f(u.uLens, st.lx, st.ly, st.lr, st.lensMag);
+    return PX;
+  };
+  return {
+    draw(st) {
+      if (gl.isContextLost()) return;
+      const look = LOOK[st.theme], night = st.theme === 'night';
+      if (memArt !== st.art) { gl.bindBuffer(gl.ARRAY_BUFFER, V.mem.b); gl.bufferData(gl.ARRAY_BUFFER, st.mem, gl.STATIC_DRAW); memArt = st.art; }
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      let PX = common(P.mem, st), u = P.mem.u;
+      gl.uniform1f(u.uPx, PX); gl.uniform1f(u.uA0, look.memA[0]); gl.uniform1f(u.uA1, look.memA[1]);
+      gl.uniform2f(u.uPar, st.parX, st.parY); gl.uniform3fv(u.uCol, look.memCol); gl.uniform1f(u.uDisc, look.memR);
+      gl.bindVertexArray(V.mem.v); gl.drawArrays(gl.POINTS, 0, MEM);
+      if (look.wash) {
+        common(P.wash, st); u = P.wash.u;
+        gl.uniform1f(u.uLit, st.lit); gl.uniform4fv(u.uCol, look.wash);
+        gl.bindVertexArray(V.wash.v); gl.drawArrays(gl.TRIANGLE_STRIP, 0, (RIBS + 1) * 2);
+      }
+      PX = common(P.dots, st); u = P.dots.u;
+      gl.uniform1f(u.uLit, st.lit); gl.uniform1f(u.uUnk, UNK); gl.uniform1f(u.uTheme, night ? 0 : 1);
+      gl.uniform1f(u.uSprite, RIB.pitch * st.art.rh * PX * look.core * look.k);
+      if (night) gl.blendFunc(gl.ONE, gl.ONE);
+      gl.bindVertexArray(V.dots.v); gl.drawArrays(gl.POINTS, 0, RIB.N);
+      gl.bindVertexArray(null);
+    }
+  };
+}
+
+/* ================================================================
+   6. QR code, from scratch (byte mode, level M, versions 1 to 6)
+   ================================================================ */
+function qrMatrix(text) {
+  const bytes = [...new TextEncoder().encode(text)];
+  const spec = [[1, 16, 1, 10], [2, 28, 1, 16], [3, 44, 1, 26], [4, 32, 2, 18], [5, 43, 2, 24], [6, 27, 4, 16]].find(v => bytes.length <= v[1] * v[2] - 2);
+  if (!spec) throw new Error('QR payload too long');
+  const [ver, perBlock, nBlocks, ecLen] = spec, size = 17 + ver * 4, dataLen = perBlock * nBlocks;
+  const bits = [], push = (val, n) => { for (let i = n - 1; i >= 0; i--) bits.push(val >>> i & 1); };
+  push(4, 4); push(bytes.length, 8); bytes.forEach(b => push(b, 8));
+  push(0, Math.min(4, dataLen * 8 - bits.length));
+  while (bits.length % 8) bits.push(0);
+  const data = [];
+  for (let i = 0; i < bits.length; i += 8) { let b = 0; for (let j = 0; j < 8; j++) b = b << 1 | bits[i + j]; data.push(b); }
+  for (let pad = 0xEC; data.length < dataLen; pad ^= 0xEC ^ 0x11) data.push(pad);
+  // Reed-Solomon over GF(256), x^8 + x^4 + x^3 + x^2 + 1
+  const exp = new Uint8Array(512), log = new Uint8Array(256);
+  for (let i = 0, x = 1; i < 255; i++) { exp[i] = x; log[x] = i; x <<= 1; if (x & 256) x ^= 0x11D; }
+  for (let i = 255; i < 512; i++) exp[i] = exp[i - 255];
+  const mul = (a, b) => a && b ? exp[log[a] + log[b]] : 0;
+  let gen = [1];
+  for (let i = 0; i < ecLen; i++) { const nx = new Array(gen.length + 1).fill(0); gen.forEach((c, j) => { nx[j] ^= c; nx[j + 1] ^= mul(c, exp[i]); }); gen = nx; }
+  const ecc = block => { const rem = new Array(ecLen).fill(0); block.forEach(b => { const f = b ^ rem.shift(); rem.push(0); for (let j = 0; j < ecLen; j++) rem[j] ^= mul(gen[j + 1], f); }); return rem; };
+  const blocks = [], eccs = [];
+  for (let b = 0; b < nBlocks; b++) { const blk = data.slice(b * perBlock, (b + 1) * perBlock); blocks.push(blk); eccs.push(ecc(blk)); }
+  const out = [];
+  for (let i = 0; i < perBlock; i++) blocks.forEach(b => out.push(b[i]));
+  for (let i = 0; i < ecLen; i++) eccs.forEach(e => out.push(e[i]));
+  // function patterns
+  const m = Array.from({ length: size }, () => new Uint8Array(size)), fn = Array.from({ length: size }, () => new Uint8Array(size));
+  const set = (x, y, v) => { if (x >= 0 && y >= 0 && x < size && y < size) { m[y][x] = v ? 1 : 0; fn[y][x] = 1; } };
+  const finder = (cx, cy) => { for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) { const d = Math.max(Math.abs(dx), Math.abs(dy)); set(cx + dx, cy + dy, d !== 2 && d !== 4); } };
+  finder(3, 3); finder(size - 4, 3); finder(3, size - 4);
+  for (let i = 8; i < size - 8; i++) { set(i, 6, i % 2 === 0); set(6, i, i % 2 === 0); }
+  if (ver > 1) { const c = size - 7; for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) set(c + dx, c + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1); }
+  const format = mask => {
+    let rem = mask;                                                 // level M = 00
+    for (let i = 0; i < 10; i++) rem = (rem << 1) ^ ((rem >>> 9) * 0x537);
+    const b = ((mask << 10) | rem) ^ 0x5412, bit = i => b >>> i & 1;
+    for (let i = 0; i <= 5; i++) set(8, i, bit(i));
+    set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8));
+    for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
+    for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i));
+    for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i));
+    set(8, size - 8, 1);
+  };
+  format(0);
+  // data, in the zigzag
+  for (let right = size - 1, k = 0; right >= 1; right -= 2) {
+    if (right === 6) right = 5;
+    for (let v = 0; v < size; v++) for (let j = 0; j < 2; j++) {
+      const x = right - j, y = ((right + 1) & 2) === 0 ? size - 1 - v : v;
+      if (!fn[y][x]) { m[y][x] = k < out.length * 8 ? out[k >>> 3] >>> (7 - (k & 7)) & 1 : 0; k++; }
+    }
+  }
+  const MASK = [(x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, (x, y) => x % 3 === 0, (x, y) => (x + y) % 3 === 0,
+    (x, y) => ((x / 3 | 0) + (y / 2 | 0)) % 2 === 0, (x, y) => x * y % 2 + x * y % 3 === 0,
+    (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0];
+  const apply = k => { for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!fn[y][x] && MASK[k](x, y)) m[y][x] ^= 1; };
+  const penalty = () => {
+    let p = 0, dark = 0;
+    const line = get => {
+      let run = 0, col = -1, hist = 0;
+      for (let i = 0; i < size; i++) {
+        const c = get(i);
+        if (c === col) { run++; if (run === 5) p += 3; else if (run > 5) p++; } else { col = c; run = 1; }
+        hist = (hist << 1 | c) & 0x7FF;
+        if (i >= 10 && (hist === 0x05D || hist === 0x5D0)) p += 40;
+      }
+    };
+    for (let y = 0; y < size; y++) line(i => m[y][i]);
+    for (let x = 0; x < size; x++) line(i => m[i][x]);
+    for (let y = 0; y < size - 1; y++) for (let x = 0; x < size - 1; x++) { const c = m[y][x]; if (c === m[y][x + 1] && c === m[y + 1][x] && c === m[y + 1][x + 1]) p += 3; }
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) dark += m[y][x];
+    return p + (Math.ceil(Math.abs(dark * 20 - size * size * 10) / (size * size)) - 1) * 10;
+  };
+  let best = 0, bestP = Infinity;
+  for (let k = 0; k < 8; k++) { apply(k); format(k); const p = penalty(); if (p < bestP) { bestP = p; best = k; } apply(k); }
+  apply(best); format(best);
+  return m;
+}
+function qrSVG(text) {
+  const m = qrMatrix(text), n = m.length; let d = '';
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    if (!m[y][x]) continue;
+    let w = 1; while (x + w < n && m[y][x + w]) w++;
+    d += `M${x} ${y}h${w}v1h${-w}z`; x += w - 1;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n} ${n}" shape-rendering="crispEdges" role="img" aria-label="QR"><path fill="#000" d="${d}"/></svg>`;
+}
+
+/* ================================================================
+   7. Words into the page
+   ================================================================ */
+const people = n => {
+  if (S.lang === 'en') return n < 5e4 ? '0' : (n / 1e6).toFixed(1) + ' million';
+  const man = Math.round(n / 1e4);
+  return S.lang === 'ja' ? (man ? man.toLocaleString('en-US') + '万人' : '0人') : (man ? man + ' 万人' : '0 人');
+};
+function renderCallouts() {
+  const on = S.lit * FIG.living, pct = Math.round(S.lit * 100);
+  $('#pct-on').textContent = pct; $('#pct-off').textContent = 100 - pct;
+  $('#txt-on').innerHTML = t('onTxt').replace('{n}', people(on));
+  $('#txt-off').innerHTML = t('offTxt').replace('{n}', people(FIG.living - on));
+}
+function renderLive() {
+  const s = (Date.now() - S.opened) / 1000, a = Math.floor(s * FIG.newInf / YEAR_S), el = $('#live');
+  el.innerHTML = t('live').replace('{a}', a).replace('{b}', Math.floor(s * FIG.deaths / YEAR_S));
+  el.style.opacity = a ? 1 : 0;
+}
+function renderCountdown() {
+  const el = $('#countdown'), now = new Date(), today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const n = Math.round((DAY - today) / 864e5);
+  el.hidden = n < 0;
+  if (n >= 0) el.textContent = n === 0 ? t('cdToday') : n === 1 ? t('cdOne') : t('cdDays').replace('{n}', n);
+}
+function renderLegend() {
+  $('#legend').innerHTML = `<li>${t('lgUnit')}</li>` + [['on', 'lgOn'], ['off', 'lgOff'], ['unk', 'lgUnk'], ['mem', 'lgMem']]
+    .map(([m, k]) => `<li><span class="mark mark--${m}"></span>${t(k)}</li>`).join('');
+}
+let chip = -1;
+function renderChips() {
+  const i = li(), ul = $('#chips');
+  ul.innerHTML = CHIPS.map((c, k) => `<li><button type="button" data-k="${k}" aria-pressed="${k === chip}">${c[0][i]}</button></li>`).join('');
+  renderWhy();
+}
+function renderWhy() {
+  const i = li();
+  $('#why').textContent = chip < 0 ? (S.poster ? T.why0p[i] : T.why0[i]) : CHIPS[chip][1][i];
+  $$('#chips button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.k === chip && !S.poster)));
+}
+// 72 hours as three days of 24 dots; the colour drains as the hours pass
+function renderDots72() {
+  const P = 2.48, R = 0.84; let s = '';
+  for (let h = 0; h < 72; h++) {
+    const o = (1 - 0.74 * Math.pow(h / 71, 0.85)).toFixed(3);
+    s += `<circle class="d72" style="--i:${h};--o:${o}" opacity="${o}" cx="${(h % 24 + 0.5) * P}" cy="${((h / 24 | 0) + 0.5) * P}" r="${R}"/>`;
+  }
+  const lbl = [0, 1, 2].map(d => `<text x="${24 * P + 0.9}" y="${(d + 0.5) * P + 0.8}">${(d + 1) * 24}h</text>`).join('');
+  $('#dots72').innerHTML = `<svg class="dots" viewBox="0 0 ${24 * P + 6} ${3 * P}" role="img" aria-label="72">${s}${lbl}</svg>`;
+}
+// 13 weeks: the first three may be too early, from week 4 a test works, 3 months settles it
+function renderWeeks() {
+  const P = 4.6, R = 1.32, y = 4.4; let s = '';
+  for (let w = 1; w <= 13; w++) {
+    const x = (w - 0.5) * P;
+    s += w < 4 ? `<circle class="w-off" cx="${x}" cy="${y}" r="${R - 0.17}"/>` : `<circle class="w-on" cx="${x}" cy="${y}" r="${R}"/>`;
+    if (w === 13) s += `<circle class="w-end" cx="${x}" cy="${y}" r="${R + 0.85}"/>`;
+  }
+  s += `<path class="w-bracket" d="M${0.5 * P - R} 1.9v-.9h${2 * P + 2 * R}v.9"/>`;
+  s += `<text x="${0.5 * P - R}" y="0.2">${t('wkEarly')}</text>`;
+  s += `<text class="w-lbl" x="${3.5 * P}" y="${y + 4.6}" text-anchor="middle">${t('wk4')}</text>`;
+  s += `<text class="w-lbl" x="${12.5 * P + R + 0.85}" y="${y + 4.6}" text-anchor="end">${t('wk13')}</text>`;
+  $('#dotsWk').innerHTML = `<svg class="dots" viewBox="0 -2 ${13 * P} ${y + 7.2}" role="img" aria-label="${t('s3c')}">${s}</svg>`;
+}
+// viral load after starting treatment (illustrative), log scale, one series
+const VL = [80000, 3000, 420, 95, 38, 26, 20];
+const CH = { w: 52, h: 28, l: 7.8, r: 51, t: 4.8, b: 21.2, lo: 0.8, hi: 5.2 };
+const chX = mth => CH.l + mth * (CH.r - CH.l) / 6, chY = v => CH.b - (Math.log10(v) - CH.lo) / (CH.hi - CH.lo) * (CH.b - CH.t);
+function renderChart() {
+  const i = li(), yT = [[100, '100'], [10000, i === 1 ? '10K' : '1万'], [100000, i === 1 ? '100K' : '10万']];
+  let s = `<rect class="zone" x="${CH.l}" y="${chY(200)}" width="${CH.r - CH.l}" height="${CH.b - chY(200)}"/>`;
+  yT.forEach(([v, l]) => { s += `<line class="grid" x1="${CH.l}" x2="${CH.r}" y1="${chY(v)}" y2="${chY(v)}"/><text x="${CH.l - 1}" y="${chY(v) + 0.75}" text-anchor="end">${l}</text>`; });
+  s += `<line class="grid" x1="${CH.l}" x2="${CH.r}" y1="${CH.b}" y2="${CH.b}"/>`;
+  [0, 2, 4, 6].forEach(mth => { s += `<text x="${chX(mth)}" y="${CH.b + 3}" text-anchor="middle">${mth}</text>`; });
+  s += `<text x="${CH.r}" y="${CH.b + 6.1}" text-anchor="end">${t('cX')}</text>`;
+  s += `<text x="0" y="1.9">${t('cTitle')}</text>`;
+  s += `<line class="thr" x1="${CH.l}" x2="${CH.r}" y1="${chY(200)}" y2="${chY(200)}"/>`;
+  s += `<text class="thr-t" x="${CH.r}" y="${chY(200) - 1}" text-anchor="end">${t('cThr')}</text>`;
+  s += `<text class="thr-t" x="${CH.l + 1}" y="${CH.b - 1.2}">${t('cZone')}</text>`;
+  s += `<line class="cross" id="ch-x" y1="${CH.t}" y2="${CH.b}"/>`;
+  s += `<path class="line" pathLength="120" d="${VL.map((v, k) => (k ? 'L' : 'M') + chX(k).toFixed(2) + ' ' + chY(v).toFixed(2)).join('')}"/>`;
+  VL.forEach((v, k) => { s += `<circle class="pt" cx="${chX(k)}" cy="${chY(v)}" r="${k === 0 || k === 6 ? 1.2 : 0.95}"/>`; });
+  s += `<circle class="hot" id="ch-hot" r="1.25"/>`;
+  $('#chart').innerHTML = `<svg viewBox="0 0 ${CH.w} ${CH.h}" role="img" aria-label="${t('cAlt')}">${s}</svg><span class="ctip" id="ch-tip" data-screen></span>`;
+}
+function renderQR() {
+  const i = li(), url = T.resUrl[i];
+  $('#qr').innerHTML = qrSVG(url);
+  $('#res').href = url; $('#res-name').textContent = T.resName[i]; $('#res-url').textContent = url.replace('https://www.', '').replace(/\/$/, '');
+}
+// the date and the name are set to exactly the same measure
+let unitProbe;
+function unitPx() {
+  if (!unitProbe) { unitProbe = document.createElement('i'); unitProbe.style.cssText = 'position:absolute;visibility:hidden;height:0;width:calc(var(--u) * 100)'; poster.append(unitProbe); }
+  return unitProbe.getBoundingClientRect().width / 100;
+}
+function fitText(measure) {
+  const u = unitPx(), box = $('.title'), target = measure || (S.poster ? 96 : parseFloat(getComputedStyle(box).getPropertyValue('--fit-w'))) || 96;
+  for (const [id, prop, lo, hi] of [['#fit-date', '--fit-date', 30, 90], ['#fit-name', '--fit-name', 8, 24]]) {
+    box.style.setProperty(prop, 20);
+    const w = $(id).getBoundingClientRect().width / u;
+    if (w > 0) box.style.setProperty(prop, clamp(20 * target / w, lo, hi).toFixed(3));
+  }
+}
+function applyLang() {
+  const i = li();
+  root.lang = poster.lang = HTML_LANG[i]; root.dataset.lang = poster.dataset.lang = S.lang;
+  document.title = T.title[i];
+  $$('[data-i]').forEach(el => { el.innerHTML = T[el.dataset.i][i]; });
+  $$('[data-set-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setLang === S.lang)));
+  $('#btn-all').textContent = S.all ? t('btnBack') : t('btnAll');
+  $('#lbl-theme').textContent = S.theme === 'night' ? t('thNight') : t('thPaper');
+  renderCallouts(); renderLive(); renderCountdown(); renderLegend(); renderChips(); renderWeeks(); renderChart(); renderQR();
+  fitText();
+}
+function applyTheme() {
+  root.dataset.theme = poster.dataset.theme = S.theme;
+  $('meta[name="theme-color"]').content = S.theme === 'night' ? '#17040a' : '#ffffff';
+  $('#lbl-theme').textContent = S.theme === 'night' ? t('thNight') : t('thPaper');
+  printKey = '';
+}
+const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+function transition(fn, cls) {
+  if (!document.startViewTransition || REDUCED) { fn(); return; }
+  if (cls) root.classList.add(cls);
+  const vt = document.startViewTransition(fn);
+  vt.finished.finally(() => cls && root.classList.remove(cls));
+}
+function setLang(lang) {
+  if (!LANGS.includes(lang) || lang === S.lang) return;
+  S.lang = lang; store.set('aids.lang', lang);
+  transition(applyLang);
+  const url = new URL(location.href); url.searchParams.set('lang', lang);
+  try { history.replaceState(null, '', url); } catch (e) {}
+}
+function setTheme(theme, origin) {
+  S.theme = theme; store.set('aids.theme', theme);
+  if (origin) { const r = origin.getBoundingClientRect(); root.style.setProperty('--vx', r.left + r.width / 2 + 'px'); root.style.setProperty('--vy', r.top + r.height / 2 + 'px'); }
+  if (origin) transition(applyTheme, 'vt-theme'); else applyTheme();
+}
+
+/* ================================================================
+   8. The live scene
+   ================================================================ */
+let RIB, MEMS = new Map(), renderer = null, fallback2D = false, printKey = '';
+const liveCanvas = $('#live-art'), printCanvas = $('#print-art');
+const artNow = () => S.compact ? ART_COMPACT : ART;
+const memFor = art => { if (!MEMS.has(art)) MEMS.set(art, buildMemorial(art)); return MEMS.get(art); };
+
+function sizeCanvas() {
+  const r = artEl.getBoundingClientRect(); if (!r.width) return;
+  let dpr = fallback2D ? Math.min(window.devicePixelRatio || 1, 2) : Math.max(1, clamp(window.devicePixelRatio || 1, 2, 3) * quality);   // 2x or more: the dots are about a pixel wide
+  const cap = fallback2D ? 3.2e6 : 9e6;
+  if (r.width * r.height * dpr * dpr > cap) dpr = Math.sqrt(cap / (r.width * r.height));
+  const w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+  if (liveCanvas.width !== w || liveCanvas.height !== h) { liveCanvas.width = w; liveCanvas.height = h; staticDirty = true; }
+}
+let staticDirty = true, staticKey = '', quality = 1, still = false, lastTick = 0, slowSum = 0, slowN = 0, slowRuns = 0;
+function watchPace(now) {                                  // slow machine? halve the supersampling, then hold still unless touched
+  const dt = now - lastTick; lastTick = now;
+  if (!S.introDone || dt > 300 || !renderer) return;
+  slowSum += dt; if (++slowN < 45) return;
+  const avg = slowSum / slowN; slowSum = slowN = 0;
+  slowRuns = avg > (quality > 0.5 ? 40 : 70) ? slowRuns + 1 : 0;
+  if (slowRuns < 2) return;
+  slowRuns = 0;
+  if (quality > 0.5) { quality = 0.5; sizeCanvas(); } else still = true;
+}
+function drawFallback() {                                 // no WebGL: a still frame, redrawn only when something changes
+  const key = [S.theme, S.compact, S.lit.toFixed(3), liveCanvas.width].join();
+  if (!staticDirty && key === staticKey) return;
+  staticDirty = false; staticKey = key;
+  draw2D(liveCanvas.getContext('2d'), liveCanvas.width, liveCanvas.height, { art: artNow(), mem: memFor(artNow()), theme: S.theme, lit: S.lit });
+}
+
+// the live glow: a small bitmap, already blurred, stretched under the dots; repainted only when the lit part changes
+let glowKey = '';
+function litGlow() {
+  const art = artNow(), key = [S.lit.toFixed(4), S.theme, art.w].join();
+  if (key === glowKey || fallback2D) return;
+  glowKey = key;
+  const c = $('#glow'), W = Math.round(art.w * 1.25), H = Math.round(art.h * 1.25);
+  if (c.width !== W || c.height !== H) { c.width = W; c.height = H; }
+  const ctx = c.getContext('2d'); ctx.clearRect(0, 0, W, H);
+  if (LOOK[S.theme].glow) paintGlow(ctx, W, art, S.lit, LOOK[S.theme].glow);
+}
+
+// leader lines follow the ribbon as it turns
+function updateLeaders(yaw, pitch) {
+  if (S.compact) return;
+  const E = RIB.edge, pick = f => {
+    const i = Math.round(f * RIBS) * 8, a = project(E[i], E[i + 1], E[i + 2], ART, yaw, pitch), b = project(E[i + 4], E[i + 5], E[i + 6], ART, yaw, pitch);
+    return a[0] > b[0] ? a : b;
+  };
+  const set = (id, from, to) => {
+    const ln = $(id), dot = $(id + '-dot');
+    ln.setAttribute('x1', from[0]); ln.setAttribute('y1', from[1]); ln.setAttribute('x2', to[0] + 1.4); ln.setAttribute('y2', to[1]);
+    dot.setAttribute('cx', to[0] + 1.4); dot.setAttribute('cy', to[1]);
+  };
+  const on = pick(0.335), off = pick(0.905);
+  set('#ld-on', [221.5, on[1]], on); set('#ld-off', [221.5, off[1]], off);
+  $('#call-on').style.top = `calc(var(--u) * ${(on[1] - 8.6).toFixed(2)})`;
+  $('#call-off').style.top = `calc(var(--u) * ${(off[1] - 8.6).toFixed(2)})`;
+}
+
+// which part of the ribbon is under the pointer?
+function zoneAt(ux, uy) {
+  // nearest rib centre on each half of the strip; where the two tails cross, the second half lies in front
+  const M = RIB.mid, art = artNow(), lim = RIB.half * art.rh * 1.06, near = [[1e9, -1], [1e9, -1]];
+  for (let i = 0; i <= RIBS; i++) {
+    const p = project(M[i * 3], M[i * 3 + 1], M[i * 3 + 2], art, S.yaw, S.pitch), d = Math.hypot(p[0] - ux, p[1] - uy), h = near[i * 2 > RIBS ? 1 : 0];
+    if (d < h[0]) { h[0] = d; h[1] = i; }
+  }
+  const hit = near[1][0] < lim ? near[1] : near[0][0] < lim ? near[0] : null;
+  if (!hit) return null;
+  const f = hit[1] / RIBS;
+  return f < S.lit ? 'on' : f < UNK ? 'off' : 'unk';
+}
+function showTip(zone, x, y) {
+  const tip = $('#tip');
+  if (!zone) { tip.style.opacity = 0; return; }
+  const on = S.lit * FIG.living;
+  const [mark, label, count] = zone === 'on' ? ['on', t('zOn'), people(on)] : zone === 'off' ? ['off', t('zOff'), t('zOffN')] : ['unk', t('zUnk'), t('zUnkN')];
+  tip.innerHTML = `<span class="mark mark--${mark}"></span><b></b><span></span>`;
+  tip.children[1].textContent = count; tip.children[2].textContent = label;
+  const r = artEl.getBoundingClientRect(), w = tip.offsetWidth;
+  tip.style.transform = `translate(${clamp(x - w / 2, 6, r.width - w - 6)}px, ${y - 64 < 6 ? y + 40 : y - 64}px)`;
+  tip.style.opacity = 1;
+}
+
+let lensTimer = 0, tStart = 0, running = false, heroVisible = true;
+function pointer(e, isDown) {
+  const r = artEl.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+  const overText = e.target.closest && e.target.closest('.lead, .call, .legend');
+  S.hover = !overText && x >= 0 && y >= 0 && x <= r.width && y <= r.height;
+  S.px = x / r.width; S.py = y / r.height;
+  S.lensOn = S.hover && (e.pointerType !== 'touch' || isDown) && S.introDone;
+  if (e.pointerType === 'touch' && isDown) { clearTimeout(lensTimer); lensTimer = setTimeout(() => { S.lensOn = false; $('#lens').style.opacity = 0; showTip(null); }, 2600); }
+  const art = artNow(), lens = $('#lens'), R = Math.max(54, r.width * 0.062);
+  lens.style.width = lens.style.height = R * 2 + 'px';
+  lens.style.transform = `translate(${x - R}px, ${y - R}px)`;
+  lens.style.opacity = S.lensOn ? 1 : 0;
+  showTip(S.lensOn ? zoneAt(S.px * art.w, S.py * art.h) : null, x, y);
+  kick();
+}
+function tick(now) {
+  running = false;
+  if (!heroVisible || document.hidden || S.poster) return;
+  if (!tStart) tStart = now;
+  watchPace(now);
+  const time = (now - tStart) / 1000, art = artNow();
+  if (!S.introDone) {
+    S.intro = clamp((time - 0.25) / 3.0, 0, 1);
+    S.lit = LIT * easeInOut(clamp((time - 1.5) / 2.3, 0, 1));
+    renderCallouts();
+    if (time > 3.9) { S.introDone = true; S.intro = 1; S.lit = LIT; renderCallouts(); }
+  }
+  // the ribbon turns toward the pointer; left alone it only breathes
+  const calm = REDUCED ? 1 : 0;
+  const ty = REDUCED ? 0 : S.hover ? (S.px - 0.576) * 0.62 : Math.sin(time * 0.33) * 0.11 + S.tiltX;
+  const tp = REDUCED ? 0 : S.hover ? (S.py - 0.5) * -0.22 : Math.sin(time * 0.21 + 1) * 0.03 + S.tiltY;
+  S.yaw += (ty - S.yaw) * 0.055; S.pitch += (tp - S.pitch) * 0.055;
+  S.lensMag += ((S.lensOn ? 3.2 : 0) - S.lensMag) * 0.14;
+  if (renderer) {
+    renderer.draw({
+      art, mem: memFor(art), theme: S.theme, time, intro: S.intro, lit: S.lit, yaw: S.yaw, pitch: S.pitch, calm,
+      lx: S.px * liveCanvas.width, ly: S.py * liveCanvas.height, lr: Math.max(54, artEl.clientWidth * 0.062) * (liveCanvas.width / Math.max(1, artEl.clientWidth)), lensMag: S.lensMag,
+      parX: S.hover && !REDUCED ? (0.5 - S.px) * 2.2 : 0, parY: S.hover && !REDUCED ? (0.5 - S.py) * 1.4 : 0
+    });
+  } else drawFallback();
+  updateLeaders(S.yaw, S.pitch); litGlow();
+  if (renderer && !REDUCED && !still || !S.introDone || tweens.length || S.hover || Math.abs(S.lensMag) > 0.01) kick();
+}
+function kick() { if (!running) { running = true; requestAnimationFrame(now => { stepTweens(now); tick(now); }); } }
+const tweens = [];
+function tween(from, to, ms, fn) { tweens.push({ from, to, ms, fn, t0: 0 }); kick(); }
+function stepTweens(now) {
+  for (let i = tweens.length - 1; i >= 0; i--) {
+    const w = tweens[i]; if (!w.t0) w.t0 = now;
+    const k = clamp((now - w.t0) / w.ms, 0, 1);
+    w.fn(w.from + (w.to - w.from) * easeInOut(k));
+    if (k >= 1) tweens.splice(i, 1);
+  }
+}
+function toggleAll() {
+  if (!S.introDone) return;
+  S.all = !S.all;
+  const b = $('#btn-all'); b.setAttribute('aria-pressed', String(S.all)); b.textContent = S.all ? t('btnBack') : t('btnAll');
+  $('#all-note').hidden = !S.all; $('#off-note').hidden = S.all;
+  tweens.length = 0;
+  const run = () => tween(S.lit, S.all ? 1 : LIT, REDUCED ? 1 : 2400, v => { S.lit = v; renderCallouts(); staticDirty = true; });
+  // on a phone the ribbon sits above the button: bring it back into view before it changes
+  const r = artEl.getBoundingClientRect();
+  if (r.bottom < innerHeight * 0.45 || r.top > innerHeight * 0.75) { artEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' }); setTimeout(run, REDUCED ? 0 : 650); } else run();
+}
+
+/* ================================================================
+   9. Print and export
+      Print: one A3 page; the art is redrawn on a 2D canvas 3508 px
+      wide. PNG: the same canvas plus the page's own DOM, rasterised
+      through an SVG foreignObject at 3508 x 4961, tagged 300 dpi.
+   ================================================================ */
+const A3 = { w: 297, h: 420, px: 3508, py: 4961, dpi: 300 };
+function posterMode(on) {                                 // the still, canonical state both outputs share
+  S.poster = on;
+  if (on) {
+    posterMode.saved = { lit: S.lit, all: S.all, yaw: S.yaw, pitch: S.pitch, intro: S.intro, done: S.introDone, compact: S.compact };
+    tweens.length = 0; S.lit = LIT; S.intro = 1; S.introDone = true; S.compact = false;
+    $('#off-note').hidden = false;
+    renderCallouts(); renderWhy(); updateLeaders(0, 0); fitText(96);
+  } else {
+    const v = posterMode.saved; if (!v) return;
+    S.compact = v.compact; S.lit = v.all ? 1 : LIT; S.intro = v.done ? 1 : v.intro; S.introDone = v.done; S.yaw = v.yaw; S.pitch = v.pitch;
+    $('#off-note').hidden = v.all;
+    renderCallouts(); renderWhy(); litGlow(); fitText(); staticDirty = true; kick();
+  }
+}
+function drawPrintArt(scale) {                            // scale 1 = 300 dpi
+  const W = Math.round(A3.px * scale), H = Math.round(W * ART.h / ART.w), key = [S.theme, W].join();
+  if (printKey === key) return;
+  printCanvas.width = W; printCanvas.height = H;
+  const off = document.createElement('canvas'); off.width = W; off.height = H;
+  draw2D(off.getContext('2d'), W, H, { art: ART, mem: memFor(ART), theme: S.theme, lit: LIT });
+  printCanvas.getContext('2d').drawImage(off, 0, 0);       // a single bitmap blit, so nothing else ends up in the print record
+  printKey = key;
+}
+// phones cap canvas area well below 17 megapixels; desktop browsers do not
+const printScale = () => /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent)) ? 0.8 : 1;
+addEventListener('beforeprint', () => { posterMode(true); drawPrintArt(printScale()); });
+addEventListener('afterprint', () => posterMode(false));
+
+const CRC = (() => { const tb = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; tb[n] = c >>> 0; } return tb; })();
+const crc32 = bytes => { let c = 0xFFFFFFFF; for (const b of bytes) c = CRC[(c ^ b) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+// write the resolution into the file: a pHYs chunk, pixels per metre, right after IHDR
+async function tagDPI(blob, dpi) {
+  const src = new Uint8Array(await blob.arrayBuffer()), parts = [src.subarray(0, 33)], ppm = Math.round(dpi / 0.0254);
+  const ch = new Uint8Array(21), dv = new DataView(ch.buffer);
+  dv.setUint32(0, 9); ch.set([112, 72, 89, 115], 4); dv.setUint32(8, ppm); dv.setUint32(12, ppm); ch[16] = 1;
+  dv.setUint32(17, crc32(ch.subarray(4, 17)));
+  parts.push(ch);
+  for (let p = 33; p < src.length;) {                     // copy the rest, dropping any pHYs already there
+    const len = new DataView(src.buffer, src.byteOffset + p, 4).getUint32(0), end = p + 12 + len;
+    if (String.fromCharCode(...src.subarray(p + 4, p + 8)) !== 'pHYs') parts.push(src.subarray(p, end));
+    p = end;
+  }
+  return new Blob(parts, { type: 'image/png' });
+}
+function posterSVG() {
+  const clone = poster.cloneNode(true);
+  $$('[data-screen], canvas, .sr', clone).forEach(n => n.remove());
+  $$('[style]', clone).forEach(n => n.style.removeProperty('view-transition-name'));
+  clone.style.cssText += ';background:transparent;margin:0;';
+  const style = document.createElement('style');
+  style.textContent = ['css-base', 'css-layout', 'css-print'].map(id => $('#' + id).textContent).join('\n');
+  const wrap = document.createElement('div');
+  wrap.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+  wrap.append(style, clone);
+  const mm = 96 / 25.4, vw = A3.w * mm, vh = A3.h * mm;
+  const xml = new XMLSerializer().serializeToString(wrap);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${A3.px}" height="${A3.py}" viewBox="0 0 ${vw} ${vh}"><foreignObject x="0" y="0" width="${vw}" height="${vh}">${xml}</foreignObject></svg>`;
+}
+async function renderPNG() {
+  posterMode(true);
+  try {
+    await new Promise(r => requestAnimationFrame(() => r()));
+    const W = A3.px, H = A3.py, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = getComputedStyle(poster).backgroundColor; ctx.fillRect(0, 0, W, H);
+    const art = document.createElement('canvas'); art.width = W; art.height = Math.round(W * ART.h / ART.w);
+    draw2D(art.getContext('2d'), art.width, art.height, { art: ART, mem: memFor(ART), theme: S.theme, lit: LIT });
+    ctx.drawImage(art, 0, 0);
+    const img = new Image();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(posterSVG());
+    await img.decode();
+    ctx.drawImage(img, 0, 0, W, H);
+    const blob = await new Promise((ok, no) => cv.toBlob(b => b ? ok(b) : no(new Error('toBlob')), 'image/png'));
+    return await tagDPI(blob, A3.dpi);
+  } finally { posterMode(false); }
+}
+function toast(msg) { const el = $('#toast'); el.textContent = msg; el.classList.add('is-on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('is-on'), 4200); }
+async function savePNG() {
+  const btn = $('#btn-png'), lbl = $('#lbl-png'); btn.disabled = true; lbl.textContent = t('dBusy');
+  try {
+    await new Promise(r => setTimeout(r, 40));
+    const blob = await renderPNG(), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = `world-aids-day-2026_${S.lang}_${S.theme}_A3_300dpi.png`;
+    document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 20000);
+    toast(t('tDone'));
+  } catch (err) { console.error(err); toast(t('tFail')); }
+  btn.disabled = false; lbl.textContent = t('dPng');
+}
+
+/* ================================================================
+   10. Start
+   ================================================================ */
+function boot() {
+  const q = new URLSearchParams(location.search), nav = (navigator.languages || [navigator.language || 'en']).map(l => l.toLowerCase());
+  const guess = () => { for (const l of nav) { if (l.startsWith('ja')) return 'ja'; if (l.startsWith('zh')) return 'zh'; if (l.startsWith('en')) return 'en'; } return 'en'; };
+  S.lang = [q.get('lang'), store.get('aids.lang'), guess()].find(l => LANGS.includes(l));
+  S.theme = [q.get('theme'), store.get('aids.theme'), 'night'].find(v => v === 'night' || v === 'paper');
+  const mq = matchMedia('(max-width: 1099.98px)');
+  S.compact = mq.matches;
+  mq.addEventListener('change', e => { S.compact = e.matches; staticDirty = true; fitText(); sizeCanvas(); kick(); });
+
+  RIB = buildRibbon();
+  renderDots72();
+  applyTheme(); applyLang();
+  $$('[data-vt]').forEach((el, i) => { el.style.viewTransitionName = 'b' + i; });
+
+  try { renderer = createGL(liveCanvas); } catch (err) { console.warn('WebGL unavailable, drawing a still frame instead.', err); renderer = null; }
+  if (!renderer) { fallback2D = true; S.intro = 1; S.introDone = true; S.lit = LIT; renderCallouts(); $('#glow').style.display = 'none'; }
+  sizeCanvas(); updateLeaders(0, 0); litGlow();
+  new ResizeObserver(() => { sizeCanvas(); fitText(); kick(); }).observe(artEl);
+  new IntersectionObserver(es => { heroVisible = es[0].isIntersecting; if (heroVisible) kick(); }, { rootMargin: '120px' }).observe(hero);
+  const seen = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); seen.unobserve(e.target); } }), { threshold: 0.4 });
+  $$('.s2, .s4').forEach(el => seen.observe(el));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) kick(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitText);
+
+  hero.addEventListener('pointermove', e => pointer(e, false));
+  hero.addEventListener('pointerdown', e => pointer(e, true));
+  hero.addEventListener('pointerleave', () => { S.hover = false; S.lensOn = false; $('#lens').style.opacity = 0; showTip(null); kick(); });
+  for (const type of ['pointerup', 'pointercancel']) hero.addEventListener(type, e => { if (e.pointerType !== 'mouse') S.hover = false; });
+  $('#btn-all').addEventListener('click', toggleAll);
+  $('#chips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; chip = chip === +b.dataset.k ? -1 : +b.dataset.k; renderWhy(); });
+  $$('[data-set-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.setLang)));
+  $('#btn-theme').addEventListener('click', e => setTheme(S.theme === 'night' ? 'paper' : 'night', e.currentTarget));
+  $('#btn-print').addEventListener('click', () => window.print());
+  $('#btn-png').addEventListener('click', savePNG);
+
+  // the chart answers the pointer: a crosshair snaps to the nearest month
+  $('#chart').addEventListener('pointermove', e => {
+    const svg = $('#chart svg'), r = svg.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * CH.w;
+    const mth = clamp(Math.round((x - CH.l) / (CH.r - CH.l) * 6), 0, 6), v = VL[mth];
+    $('#chart').classList.add('is-hover');
+    const cx = chX(mth), cy = chY(v), ln = $('#ch-x'), hot = $('#ch-hot'), tip = $('#ch-tip');
+    ln.setAttribute('x1', cx); ln.setAttribute('x2', cx); hot.setAttribute('cx', cx); hot.setAttribute('cy', cy);
+    const n = v >= 1000 ? Math.round(v / 1000) * 1000 : v, txt = S.lang === 'en' ? n.toLocaleString('en-US') : (n >= 10000 ? n / 10000 + '万' : n.toLocaleString('en-US'));
+    tip.textContent = (mth ? t('cTip') : t('cTip0')).replace('{m}', mth).replace('{v}', txt);
+    tip.style.left = cx / CH.w * 100 + '%'; tip.style.top = cy / CH.h * r.height + 'px';
+  });
+  $('#chart').addEventListener('pointerleave', () => $('#chart').classList.remove('is-hover'));
+
+  if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission !== 'function' && !REDUCED) {
+    let base = null;
+    addEventListener('deviceorientation', e => {
+      if (e.gamma == null || e.beta == null) return;
+      if (!base) base = [e.gamma, e.beta];
+      S.tiltX = clamp((e.gamma - base[0]) / 90, -0.4, 0.4); S.tiltY = clamp((e.beta - base[1]) / -180, -0.18, 0.18);
+    });
+  }
+  setInterval(() => { if (!document.hidden && !S.poster) renderLive(); }, 1000);
+  setInterval(renderCountdown, 60000);
+  kick();
+}
+boot();
+})();
+</script>
+<noscript><p style="font:16px/1.6 sans-serif;padding:24px;color:#fff">World AIDS Day, 1 December 2026. This page needs JavaScript to draw the poster.</p></noscript>
+</body>
+</html>
